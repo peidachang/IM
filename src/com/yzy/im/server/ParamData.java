@@ -1,6 +1,9 @@
 package com.yzy.im.server;
 
 import java.util.HashMap;
+import java.util.Map;
+
+import com.universal.framwork.util.LogUtil;
 
 import android.text.TextUtils;
 
@@ -28,6 +31,30 @@ public class ParamData
     {
       parmas.put(key, value);
     }
+  }
+  
+  public String get(String key)
+  {
+    if(!TextUtils.isEmpty(key))
+    {
+      return parmas.get(key);
+    }else
+    {
+      return null;
+    }
+  }
+  
+  @Override
+  public String toString()
+  {
+    StringBuilder sb=new StringBuilder();
+    for(Map.Entry<String, String> entry:parmas.entrySet())
+    {
+      sb.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+    }
+    sb.deleteCharAt(sb.toString().length()-1);
+    LogUtil.i("yzy", "toString--->"+sb.toString());
+    return super.toString();
   }
   
 }

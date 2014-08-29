@@ -2,8 +2,14 @@ package com.yzy.im.server;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
-public class IMManager
+import com.yzy.im.util.MD5Util;
+
+import android.text.TextUtils;
+
+public class IMManager implements IConstants
 {
   private static final String TAG = "IMManager";
   
@@ -33,9 +39,19 @@ public class IMManager
   
   public String sendHttpRequest(ParamData data)
   {
-    String result=null;
-    
-    return result;
+    StringBuilder sb=new StringBuilder();
+    String channel=data.get(CHANNEL_ID);
+    if(TextUtils.isEmpty(channel))
+    {
+      channel="channel";
+    }
+    data.put(TIMESTAMP, String.valueOf(System.currentTimeMillis()/1000));
+    sb.append(HTTP_METHOD)
+    .append(mUrl)
+    .append(channel)
+    .append(data.toString());
+    data.put(SIGN, MD5Util.encode(sb.toString()));
+    return sb.toString();
   }
   
   
