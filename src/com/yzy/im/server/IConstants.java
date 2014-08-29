@@ -65,9 +65,15 @@ public interface IConstants
   
   public static final String QUERY_DEVICE_TYPE="query_device_type";
   
-  public static final String API_KEY="v39ZGSe6lOZlPLGAQyVeCmCd";
   
-  public static final String  SECRET_KEY="oAAlQzOEaNDvDskvelNduk8PbAzklTXu";
+  public static final String HTTP_METHOD="POST";
+  
+  
+  public static final String mapikey="v39ZGSe6lOZlPLGAQyVeCmCd";
+  
+  public static final String secretkey="oAAlQzOEaNDvDskvelNduk8PbAzklTXu";
+  
+  public static final String mUrl="http://channel.api.duapp.com/rest/2.0/channel/";
   
   
   
