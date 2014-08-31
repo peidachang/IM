@@ -3,7 +3,6 @@ package com.yzy.im.server;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.universal.framwork.util.LogUtil;
 
 import android.text.TextUtils;
 
@@ -53,7 +52,6 @@ public class ParamData
       sb.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
     }
     sb.deleteCharAt(sb.toString().length()-1);
-    LogUtil.i("yzy", "toString--->"+sb.toString());
     return super.toString();
   }
   
