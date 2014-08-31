@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.widget.FrameLayout;
 
 import com.yzy.im.R;
+import com.yzy.im.server.IMManager;
 import com.yzy.im.slidemenu.BaseSlidingFragmentActivity;
 import com.yzy.im.slidemenu.SlidingMenu;
 import com.yzy.im.util.CommonUtil;
@@ -28,7 +29,8 @@ public class MainActivity extends BaseSlidingFragmentActivity
     setContentView(R.layout.activity_main);
     addLeft();
     
-    
+    IMManager manager=new IMManager();
+    manager.pushMessage("Hello,Every One");
   }
   
   @SuppressLint("NewApi")
