@@ -12,13 +12,15 @@ import android.view.MotionEvent;
 import android.widget.FrameLayout;
 
 import com.yzy.im.R;
+import com.yzy.im.bean.IMMessage;
+import com.yzy.im.callback.IEventCallback;
 import com.yzy.im.server.IMManager;
 import com.yzy.im.slidemenu.BaseSlidingFragmentActivity;
 import com.yzy.im.slidemenu.SlidingMenu;
 import com.yzy.im.util.CommonUtil;
 
 @SuppressLint("NewApi")
-public class MainActivity extends BaseSlidingFragmentActivity
+public class MainActivity extends BaseSlidingFragmentActivity implements IEventCallback
 {
   private SlidingMenu mSlidingMenu;
 
@@ -57,12 +59,26 @@ public class MainActivity extends BaseSlidingFragmentActivity
     
   }
   
+
   @Override
-  public boolean onTouchEvent(MotionEvent event)
+  public void onMessage(IMMessage message)
   {
-    Log.v("yzy", "onTouchEvent");
-    return super.onTouchEvent(event);
-   
+  }
+
+  @Override
+  public void onBind(String method, int errorCode, String content)
+  {
+    
+  }
+
+  @Override
+  public void onNotify(String title, String content)
+  {
+  }
+
+  @Override
+  public void onNetChange(boolean isNetConnected)
+  {
   }
 
 

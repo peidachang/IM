@@ -52,6 +52,8 @@ public class IMManager implements IConstants
   }
   
   private String HttpRequest(String url, String query) {
+    LogUtil.getLogger().d("url-->"+url);
+    LogUtil.getLogger().d("query-->"+query);
     StringBuilder out=new StringBuilder();
     URL urlobj;
     HttpURLConnection connection = null;
