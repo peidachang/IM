@@ -1,6 +1,7 @@
 package com.yzy.im.ui;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -65,11 +66,6 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
   {
   }
 
-  @Override
-  public void onBind(String method, int errorCode, String content)
-  {
-    
-  }
 
   @Override
   public void onNotify(String title, String content)
@@ -78,6 +74,11 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
 
   @Override
   public void onNetChange(boolean isNetConnected)
+  {
+  }
+
+  @Override
+  public void onBind(Context context, int errorCode, String content)
   {
   }
 

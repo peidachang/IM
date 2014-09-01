@@ -1,6 +1,8 @@
 package com.yzy.im.client;
 
 import com.baidu.android.pushservice.PushConstants;
+import com.yzy.im.IMApplication;
+import com.yzy.im.callback.IEventCallback;
 import com.yzy.im.util.LogUtil;
 
 import android.content.BroadcastReceiver;
@@ -27,6 +29,14 @@ public class IMMessageReceiver extends BroadcastReceiver
       String method=intent.getExtras().getString(PushConstants.EXTRA_METHOD);
       int errorCode=intent.getExtras().getInt(PushConstants.EXTRA_ERROR_CODE,PushConstants.ERROR_SUCCESS);
       String content=new String(intent.getExtras().getByteArray(PushConstants.EXTRA_CONTENT));
+      LogUtil.getLogger().v("method="+method+",errorCode="+errorCode+",content="+content);
+      if(method.equals(PushConstants.METHOD_BIND))
+      {
+        for(IEventCallback callback:IMApplication.getInstance().getCallback())
+        {
+          callback.onBind(context, errorCode, content);
+        }
+      }
     }else if(intent.getAction().equals(PushConstants.ACTION_RECEIVER_NOTIFICATION_CLICK))
     {
       String title=intent.getExtras().getString(PushConstants.EXTRA_NOTIFICATION_TITLE);

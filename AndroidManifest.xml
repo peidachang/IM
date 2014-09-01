@@ -58,6 +58,18 @@
                 <data android:scheme="package" />
             </intent-filter>                   
         </receiver>
+        <receiver android:name="com.yzy.im.client.IMMessageReceiver"
+            >
+            <intent-filter >
+                 <!-- 接收网络变化的广播 -->
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <!-- 接收push消息 -->
+                <action android:name="com.baidu.android.pushservice.action.MESSAGE" />
+                <!-- 接收bind,unbind,fetch,delete等反馈消息 -->
+                <action android:name="com.baidu.android.pushservice.action.RECEIVE" />
+                <action android:name="com.baidu.android.pushservice.action.notification.CLICK" />
+            </intent-filter>
+        </receiver>
         <service
             android:name="com.baidu.android.pushservice.PushService"
             android:exported="true"
