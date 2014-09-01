@@ -8,9 +8,9 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 
-import com.universal.framwork.util.LogUtil;
 import com.yzy.im.R;
 import com.yzy.im.customview.ClearEditText;
+import com.yzy.im.util.LogUtil;
 import com.yzy.im.util.SharePreferenceHelper;
 
 public class LoginActivity extends Activity implements OnClickListener
@@ -41,7 +41,7 @@ public class LoginActivity extends Activity implements OnClickListener
   {
     if(view.getId()==R.id.login)
     {
-      LogUtil.i("yzy", "name-->"+mName.getText()+",password-->"+mpwd.getText());
+      LogUtil.getLogger().d("name-->"+mName.getText());
       if(mName.getText().toString().equals("gavin") && mpwd.getText().toString().equals("123"))
       {
         Intent intent=new Intent(LoginActivity.this,MainActivity.class);

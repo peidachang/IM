@@ -1,9 +1,11 @@
 package com.yzy.im.server;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.universal.framwork.util.LogUtil;
+import com.yzy.im.util.CommonUtil;
+import com.yzy.im.util.LogUtil;
 
 import android.text.TextUtils;
 
@@ -13,48 +15,42 @@ import android.text.TextUtils;
  * @author yuanzeyao <br/>
  * create at 2014年8月29日 下午4:37:47
  */
-public class ParamData
+public class ParamData extends HashMap<String,String>
 {
   private static final String TAG = "ParamData";
-  private HashMap<String,String> parmas;
   
   public ParamData(String method)
   {
-    parmas=new HashMap<String,String>();
-    parmas.put(IConstants.METHOD,method);
-    parmas.put(IConstants.APIKEY,IConstants.mapikey);
+    put(IConstants.METHOD,method);
+    put(IConstants.APIKEY,IConstants.mapikey);
   }
   
-  public void put(String key,String value)
-  {
-    if(!TextUtils.isEmpty(key) && !TextUtils.isEmpty(value))
-    {
-      parmas.put(key, value);
-    }
-  }
+
   
-  public String get(String key)
-  {
-    if(!TextUtils.isEmpty(key))
-    {
-      return parmas.get(key);
-    }else
-    {
-      return null;
-    }
-  }
+
   
   @Override
   public String toString()
   {
     StringBuilder sb=new StringBuilder();
-    for(Map.Entry<String, String> entry:parmas.entrySet())
+    for(Map.Entry<String, String> entry:entrySet())
     {
-      sb.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+      sb.append(entry.getKey()).append("=").append(entry.getValue());
     }
-    sb.deleteCharAt(sb.toString().length()-1);
-    LogUtil.i("yzy", "toString--->"+sb.toString());
-    return super.toString();
+    LogUtil.getLogger().v(sb.toString());
+    return sb.toString();
+  }
+  
+  public String getParamString() throws UnsupportedEncodingException
+  {
+    StringBuilder sb=new StringBuilder();
+    for(Map.Entry<String, String> entry:entrySet())
+    {
+      sb.append(entry.getKey()).append("=").append(CommonUtil.urlEncode(entry.getValue())).append("&");
+    }
+    sb.deleteCharAt(sb.length()-1);
+    LogUtil.getLogger().v(sb.toString());
+    return sb.toString();
   }
   
 }
