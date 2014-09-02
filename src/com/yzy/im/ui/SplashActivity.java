@@ -46,16 +46,16 @@ public class SplashActivity extends Activity
       @Override
       public void onAnimationEnd(Animation arg0)
       {
-        String name=SharePreferenceHelper.getInstance(SplashActivity.this).getStringVaule(SharePreferenceHelper.KEY_LOGIN_NAME, "");
-        if(TextUtils.isEmpty(name))
+        //if(TextUtils.isEmpty(name))
         {
           Intent intent=new Intent(SplashActivity.this,LoginActivity.class);
           SplashActivity.this.startActivity(intent);
-        }else
-        {
-          Intent intent=new Intent(SplashActivity.this,MainActivity.class);
-          SplashActivity.this.startActivity(intent);
         }
+//        else
+//        {
+//          Intent intent=new Intent(SplashActivity.this,MainActivity.class);
+//          SplashActivity.this.startActivity(intent);
+//        }
         SplashActivity.this.finish();
       }
     });

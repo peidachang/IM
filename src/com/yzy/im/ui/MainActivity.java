@@ -23,7 +23,10 @@ import com.yzy.im.util.CommonUtil;
 @SuppressLint("NewApi")
 public class MainActivity extends BaseSlidingFragmentActivity implements IEventCallback
 {
+  private static final String[] groups={"我的好友","我的同学","我的家人"};
   private SlidingMenu mSlidingMenu;
+  
+ 
 
   @Override
   public void onCreate(Bundle savedInstanceState)

@@ -10,50 +10,51 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
+import com.yzy.im.util.CommonUtil;
 import com.yzy.im.util.LogUtil;
 import com.yzy.im.util.MD5Util;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 public class IMManager implements IConstants
 {
   private static final String TAG = "IMManager";
-  public static final String SEND_MSG_ERROR = "send_msg_error";
+ 
+  public static IMManager _instance=null;
   
-  
-
+  public static IMManager getInstance()
+  {
+    if(_instance==null)
+      _instance=new IMManager();
+    
+    return _instance;
+  }
   
   
   public String sendHttpRequest(ParamData data)
   {
     try
     {
-      StringBuilder sb=new StringBuilder();
-      String channel=data.remove(CHANNEL_ID);
-      if(TextUtils.isEmpty(channel))
-      {
-        channel="channel";
-      }
       data.put(TIMESTAMP, String.valueOf(System.currentTimeMillis()/1000));
-      sb.append(HTTP_METHOD)
-      .append(mUrl)
-      .append(channel)
-      .append(data.toString())
-      .append(secretkey);
-      data.put(SIGN, MD5Util.encode(sb.toString()));
+      String channel=data.remove(CHANNEL_ID);
+      if(channel==null)
+        channel="channel";
+
+      data.put(SIGN,CommonUtil.getSignature(data,channel));
       return HttpRequest(mUrl + channel,data.getParamString());
     }catch(Exception e)
     {
-      LogUtil.getLogger().e("error-->"+SEND_MSG_ERROR);
       return SEND_MSG_ERROR;
     }
    
   }
   
   private String HttpRequest(String url, String query) {
-    LogUtil.getLogger().d("url-->"+url);
-    LogUtil.getLogger().d("query-->"+query);
+    LogUtil.getLogger().v(url);
+    LogUtil.getLogger().v(query);
     StringBuilder out=new StringBuilder();
     URL urlobj;
     HttpURLConnection connection = null;

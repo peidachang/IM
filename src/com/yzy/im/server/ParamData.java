@@ -1,13 +1,11 @@
 package com.yzy.im.server;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.yzy.im.util.CommonUtil;
 import com.yzy.im.util.LogUtil;
-
-import android.text.TextUtils;
 
 /**
  * 执行RESEAPI时，需要的参数
@@ -15,7 +13,7 @@ import android.text.TextUtils;
  * @author yuanzeyao <br/>
  * create at 2014年8月29日 下午4:37:47
  */
-public class ParamData extends HashMap<String,String>
+public class ParamData extends TreeMap<String, String>
 {
   private static final String TAG = "ParamData";
   

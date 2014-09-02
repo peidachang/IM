@@ -1,13 +1,25 @@
 package com.yzy.im.util;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
-public class CommonUtil
+import com.yzy.im.IMApplication;
+import com.yzy.im.server.IConstants;
+
+@SuppressLint("NewApi")
+public class CommonUtil implements IConstants
 {
   private static final String TAG = "CommonUtil";
   
@@ -47,5 +59,33 @@ public class CommonUtil
     tmp=tmp.replace("\"", "\\\"");
     tmp=tmp.replace("\'", "\\\'");
     return tmp;
+  }
+  
+  public static String getSignature(TreeMap<String,String> sortedParams,String channel) throws IOException
+  {
+    // 先将参数以其参数名的字典序升序进行排序
+    Set<Entry<String, String>> entrys = sortedParams.entrySet();
+   
+    // 遍历排序后的字典，将所有参数按"key=value"格式拼接在一起
+    StringBuilder basestring = new StringBuilder();
+    sortedParams.put(TIMESTAMP,
+        Long.toString(System.currentTimeMillis() / 1000));
+    sortedParams.remove(SIGN);
+    
+    basestring.append(HTTP_METHOD);
+    basestring.append(mUrl);
+    basestring.append(channel);
+    
+    for (Entry<String, String> param : entrys) {
+      basestring.append(param.getKey()).append("=").append(param.getValue());
+    }
+    basestring.append(secretkey);
+    
+    return MD5Util.encode(basestring.toString());
+  }
+  
+  public static String getStringById(int id)
+  {
+    return IMApplication.getInstance().getResources().getString(id);
   }
 }

@@ -15,6 +15,7 @@ public class SharePreferenceHelper
   public static final String KEY_CHANNEL_ID="ChannelId";
   public static final String KEY_NICK="nick";
   public static final String KEY_HEAD_ID="headId";
+  public static final String KEY_APP_ID="appid";
   
   private static SharePreferenceHelper instance=null;
   
@@ -38,7 +39,7 @@ public class SharePreferenceHelper
     }
   }
   
-  public void setStringValue(String key,String value)
+  private void setStringValue(String key,String value)
   {
     if(!TextUtils.isEmpty(key)&& !TextUtils.isEmpty(value))
     {
@@ -49,7 +50,7 @@ public class SharePreferenceHelper
     }
   }
   
-  public String getStringVaule(String key,String defaultValue)
+  private String getStringVaule(String key,String defaultValue)
   {
     String result=null;
     if(!TextUtils.isEmpty(key))
@@ -59,7 +60,7 @@ public class SharePreferenceHelper
     return result;
   }
   
-  public void setIntValue(String key,int value)
+  private void setIntValue(String key,int value)
   {
     if(!TextUtils.isEmpty(key))
     {
@@ -70,7 +71,7 @@ public class SharePreferenceHelper
     }
   }
   
-  public int getIntVaule(String key,int defaultValue)
+  private int getIntVaule(String key,int defaultValue)
   {
     int result=-1;
     if(!TextUtils.isEmpty(key))
@@ -120,6 +121,14 @@ public class SharePreferenceHelper
   public void setHeadId(int headId)
   {
     setIntValue(KEY_HEAD_ID, headId);
+  }
+  public String getAppId()
+  {
+    return getStringVaule(KEY_APP_ID, "");
+  }
+  public void setAppId(String appId)
+  {
+    setStringValue(KEY_APP_ID, appId);
   }
   
 
