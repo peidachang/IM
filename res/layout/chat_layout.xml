@@ -26,6 +26,8 @@
         android:id="@+id/inputBar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:background="@drawable/bottombar_bg"
         android:gravity="center_vertical" >
 
@@ -70,7 +72,7 @@
                 android:layout_height="34.0dip"
                 android:layout_marginLeft="4.0dip"
                 android:background="@drawable/chat_bottombar_btn_selector"
-                android:enabled="false"
+                android:enabled="true"
                 android:shadowColor="#ff568ab5"
                 android:shadowDx="0.0"
                 android:shadowDy="-1.0"
@@ -80,33 +82,6 @@
                 android:textSize="14.0sp" />
         </LinearLayout>
     </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/panelLayout"
-        android:layout_width="fill_parent"
-        android:layout_height="204.0dip"
-        android:background="#ff34373c"
-        android:visibility="gone" >
-
-        <GridView
-            android:id="@+id/panel"
-            android:layout_width="fill_parent"
-            android:layout_height="204.0dip"
-            android:gravity="center"
-            android:listSelector="#ff34373c"
-            android:numColumns="4"
-            android:paddingLeft="11.0dip"
-            android:paddingRight="11.0dip"
-            android:paddingTop="14.0dip"
-            android:scrollbars="none"
-            android:stretchMode="columnWidth"
-            android:verticalSpacing="14.0dip" />
-
-        <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/chat_plugin_shadow" />
-    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/face_ll"

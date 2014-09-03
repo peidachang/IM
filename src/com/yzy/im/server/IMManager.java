@@ -97,7 +97,6 @@ public class IMManager implements IConstants
 
     } catch (Exception e) {
       e.printStackTrace();
-      LogUtil.getLogger().e(e.getMessage());
       out.append(SEND_MSG_ERROR);//消息发送失败，返回错误，执行重发
     }
 
@@ -120,6 +119,17 @@ public class IMManager implements IConstants
     data.put(MESSAGES, msg);
     data.put(MSG_KEYS,MSG_KEY);
     data.put(PUSH_TYPE, PUSH_TYPE_ALL);
+    return sendHttpRequest(data);
+  }
+  
+  public String pushMessage(String msg,String userId)
+  {
+    ParamData data=new ParamData(PUSH_MSG);
+    data.put(MESSAGE_TYPE, TEXT_MESSAGE);
+    data.put(MESSAGES, msg);
+    data.put(USER_ID, userId);
+    data.put(MSG_KEYS,MSG_KEY);
+    data.put(PUSH_TYPE, PUSH_TYPE_USER);
     return sendHttpRequest(data);
   }
   

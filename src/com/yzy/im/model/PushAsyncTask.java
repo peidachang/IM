@@ -1,6 +1,7 @@
 package com.yzy.im.model;
 
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import com.yzy.im.R;
 import com.yzy.im.callback.IPushMessageCallback;
@@ -28,8 +29,10 @@ public class PushAsyncTask extends AsyncTask<Object, Void, String>
       String message=(String)objs[0];
       String userId=(String)objs[1];
       callback=(IPushMessageCallback)objs[2];
-      
-      result=IMManager.getInstance().pushMessage(message);
+      if(TextUtils.isEmpty(userId))
+        result=IMManager.getInstance().pushMessage(message);
+      else
+        result=IMManager.getInstance().pushMessage(message, userId);
     }catch(PushMessageException e)
     {
       result=null;

@@ -90,9 +90,11 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
     {
       
       @Override
-      public boolean onChildClick(ExpandableListView parent, View view, int arg2, int arg3, long arg4)
+      public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id)
       {
         Intent intent=new Intent(MainActivity.this,ChatActivity.class);
+        User user=mChilds.get(groupPosition).get(childPosition);
+        intent.putExtra("user", user);
         MainActivity.this.startActivity(intent);
         return true;
       }
@@ -195,7 +197,7 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
     if(!TextUtils.isEmpty(tmpgroup))
     {
       int i=0;
-      for(String tmp:tmpgroup.split(","))
+      for(String tmp:tmpgroup.split("&"))
       {
         groups.add(tmp);
         mChilds.put(i++, new ArrayList());

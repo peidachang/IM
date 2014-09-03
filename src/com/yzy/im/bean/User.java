@@ -1,8 +1,10 @@
 package com.yzy.im.bean;
 
+import java.io.Serializable;
+
 import com.yzy.im.R;
 
-public class User
+public class User implements Serializable
 {
   private static final String TAG = "User";
   
