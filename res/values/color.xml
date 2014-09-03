@@ -2,4 +2,8 @@
 <resources>
     <color name="progress_bg">#BB111111</color>
     <color name="progress_txt">#FFFFFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="holo_blue">#FF33E5B5</color>
+    <color name="black">@color/color_hei</color>
+     <color name="color_hei">#ff000000</color>
 </resources>

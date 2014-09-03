@@ -84,6 +84,7 @@ public interface IConstants
   public final static String PUSH_TYPE_ALL = "3";
   
   public static final String SEND_MSG_ERROR = "send_msg_error";
+  public static final String MSG_NEW_USER="*#*#%&";
   
   
   public static final String mapikey="v39ZGSe6lOZlPLGAQyVeCmCd";

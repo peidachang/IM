@@ -1,13 +1,15 @@
 package com.yzy.im.client;
 
-import com.baidu.android.pushservice.PushConstants;
-import com.yzy.im.IMApplication;
-import com.yzy.im.callback.IEventCallback;
-import com.yzy.im.util.LogUtil;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import com.baidu.android.pushservice.PushConstants;
+import com.google.gson.Gson;
+import com.yzy.im.IMApplication;
+import com.yzy.im.bean.IMMessage;
+import com.yzy.im.callback.IEventCallback;
+import com.yzy.im.util.LogUtil;
 
 public class IMMessageReceiver extends BroadcastReceiver
 {
@@ -23,7 +25,13 @@ public class IMMessageReceiver extends BroadcastReceiver
     if(intent.getAction().equals(PushConstants.ACTION_MESSAGE))
     {
       String msg=intent.getExtras().getString(PushConstants.EXTRA_PUSH_MESSAGE_STRING);
-      LogUtil.getLogger().v("[Message->]"+msg);
+      LogUtil.getLogger().i("[Message->]"+msg);
+      Gson json=new Gson();
+      for(IEventCallback callback:IMApplication.getInstance().getCallback())
+      {
+        callback.onMessage(json.fromJson(msg, IMMessage.class));
+      }
+      
     }else if(intent.getAction().equals(PushConstants.ACTION_RECEIVE))
     {
       String method=intent.getExtras().getString(PushConstants.EXTRA_METHOD);

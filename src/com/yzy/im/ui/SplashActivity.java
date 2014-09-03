@@ -1,9 +1,10 @@
 package com.yzy.im.ui;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -13,7 +14,7 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 
 import com.yzy.im.R;
-import com.yzy.im.util.SharePreferenceHelper;
+import com.yzy.im.config.IMConfiguration;
 
 public class SplashActivity extends Activity
 {
@@ -35,6 +36,13 @@ public class SplashActivity extends Activity
       @Override
       public void onAnimationStart(Animation arg0)
       {
+        try
+        {
+          IMConfiguration.loadProperties(SplashActivity.this.getAssets().open("im.properties"));
+        } catch (IOException e)
+        {
+          e.printStackTrace();
+        }
       }
       
       @Override

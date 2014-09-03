@@ -114,7 +114,7 @@ public class LoginActivity extends Activity implements OnClickListener,IEventCal
         IMApplication.getInstance().getSharePreference().setAppId(user_id);
         
         //通知其他用户，你已经登录成功
-        IMMessage msg=new IMMessage("hello", "tag");
+        IMMessage msg=new IMMessage(IConstants.MSG_NEW_USER, "tag");
         PushAsyncTask task=new PushAsyncTask();
         task.execute(new Gson().toJson(msg),"",new IPushMessageCallback()
         {

@@ -34,8 +34,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.yzy.im.ui.MainActivity" ></activity>
+       <activity android:name="com.yzy.im.ui.MainActivity" ></activity>
        <activity android:name="com.yzy.im.ui.LoginActivity"></activity>
+       <activity android:name="com.yzy.im.ui.ChatActivity" ></activity>
         
         <!-- push必须的receviver和service声明 -->
         <receiver android:name="com.baidu.android.pushservice.PushServiceReceiver"
