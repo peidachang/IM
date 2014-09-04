@@ -77,7 +77,11 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements Iphone
   @Override
   public int getChildrenCount(int groupPosition)
   {
-    return mChildren.get(groupPosition).size();
+    if(mChildren.size()>groupPosition)
+    {
+      return mChildren.get(groupPosition).size();
+    }
+    return 0;
   }
 
   @Override

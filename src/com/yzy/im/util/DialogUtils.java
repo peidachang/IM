@@ -21,16 +21,17 @@ public class DialogUtils
       dialog=new ProgressDialog(mContext);
       dialog.show();
       dialog.setContentView(R.layout.progress_dialog);
+      Window window=dialog.getWindow();
+      WindowManager.LayoutParams lp=window.getAttributes();
+      lp.width=280;
+      lp.height=280;
+      window.setAttributes(lp);
       if(!TextUtils.isEmpty(info))
       {
         ((TextView) dialog.findViewById(R.id.tv_info)).setText(info);;
       }
       dialog.setCancelable(true);
-      Window window=dialog.getWindow();
-      WindowManager.LayoutParams lp=window.getAttributes();
-      lp.width=320;
-      lp.height=320;
-      window.setAttributes(lp);
+     
       dialog.setCanceledOnTouchOutside(false);
     }
     

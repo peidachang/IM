@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -58,6 +58,11 @@
     <style name="popup_center" parent="android:Animation">
         <item name="@android:windowEnterAnimation">@anim/gd_grow_from_bottom</item>
         <item name="@android:windowExitAnimation">@anim/gd_shrink_from_top</item>
+    </style>
+    
+    
+    <style name="progress_dialog" parent="@android:style/Widget.ProgressBar">
+        <item name="android:indeterminateDrawable">@drawable/common_loading3</item>
     </style>
 
 </resources>
