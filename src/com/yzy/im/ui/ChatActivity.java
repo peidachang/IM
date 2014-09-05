@@ -343,6 +343,10 @@ public class ChatActivity extends Activity implements OnClickListener,onKeyBorad
   @Override
   public void afterTextChanged(Editable s)
   {
+    if(s==null || s.length()==0)
+    {
+      btnSend.setEnabled(false);
+    }
   }
   
   @Override
