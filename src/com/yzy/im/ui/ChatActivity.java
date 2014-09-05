@@ -331,6 +331,7 @@ public class ChatActivity extends Activity implements OnClickListener,onKeyBorad
   @Override
   public void onTextChanged(CharSequence s, int start, int before, int count)
   {
+    //设置btnSend是否可用
     if(s.length()>0)
     {
       btnSend.setEnabled(true);
