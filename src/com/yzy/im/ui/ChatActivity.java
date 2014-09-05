@@ -3,19 +3,20 @@ package com.yzy.im.ui;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import android.R.integer;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,20 +34,25 @@ import com.google.gson.Gson;
 import com.yzy.im.IMApplication;
 import com.yzy.im.R;
 import com.yzy.im.adapter.FacePagerAdapter;
+import com.yzy.im.adapter.MessageAdapter;
 import com.yzy.im.adapter.PerPageAdapter;
 import com.yzy.im.bean.IMMessage;
+import com.yzy.im.bean.MessageItem;
 import com.yzy.im.bean.User;
+import com.yzy.im.callback.IEventCallback;
 import com.yzy.im.callback.IPushMessageCallback;
 import com.yzy.im.customview.CirclePageIndicator;
 import com.yzy.im.customview.InputLinearLayout;
-import com.yzy.im.customview.JazzyViewPager;
 import com.yzy.im.customview.InputLinearLayout.onKeyBoradListener;
+import com.yzy.im.customview.JazzyViewPager;
+import com.yzy.im.customview.MsgListView;
+import com.yzy.im.customview.XListViewFooter;
 import com.yzy.im.model.PushAsyncTask;
 import com.yzy.im.util.LogUtil;
 import com.yzy.im.util.ToastUtils;
 
 public class ChatActivity extends Activity implements OnClickListener,onKeyBoradListener,
-          OnItemClickListener,OnPageChangeListener,OnTouchListener,TextWatcher
+          OnItemClickListener,OnPageChangeListener,OnTouchListener,TextWatcher,IEventCallback
 {
   private static final String TAG = "ChatActivity";
   private static final int NUMOFEM=20;
@@ -60,6 +66,8 @@ public class ChatActivity extends Activity implements OnClickListener,onKeyBorad
   
   private JazzyViewPager mViewPager;
   private CirclePageIndicator mPageIndicator;
+  private MsgListView mListView;
+  private MessageAdapter adapter;
   private InputLinearLayout root;
   
   private boolean isNeedShowFacePanel=false;
@@ -74,6 +82,7 @@ public class ChatActivity extends Activity implements OnClickListener,onKeyBorad
   {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.chat_layout);
+    IMApplication.getInstance().getCallback().add(this);
     initView();
     user=(User) this.getIntent().getSerializableExtra("user");
   }
@@ -89,14 +98,28 @@ public class ChatActivity extends Activity implements OnClickListener,onKeyBorad
     mImgBtn.setOnClickListener(this);
     root.setOnKeyBoradListener(this);
     
+    
     mViewPager=(JazzyViewPager)this.findViewById(R.id.face_pager);
     mPageIndicator=(CirclePageIndicator)this.findViewById(R.id.indicator);
     mPageIndicator.setOnPageChangeListener(this);
     mMsgEdit.addTextChangedListener(this);
+    
     initFacePanel();
+    initMsgListView();
     
     //初始化输入法
     imm=(InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+  }
+  
+  private void initMsgListView()
+  {
+    mListView=(MsgListView) this.findViewById(R.id.msg_listView);
+    mListView.setOnTouchListener(this);
+    mListView.setPullLoadEnable(false);
+    mListView.setPullRefreshEnable(false);
+    ArrayList<MessageItem> msgs=new ArrayList<MessageItem>();
+    adapter=new MessageAdapter(msgs, this);
+    mListView.setAdapter(adapter);
   }
   
   private void initFacePanel()
@@ -146,6 +169,8 @@ public class ChatActivity extends Activity implements OnClickListener,onKeyBorad
     if(v.getId()==R.id.send_btn)
     {
       sendMessage();
+      mMsgEdit.setText("");
+      imm.hideSoftInputFromWindow(mMsgEdit.getWindowToken(), 0);
     }else if(v.getId()==R.id.face_btn)
     {
       if(face_panel!=null)
@@ -165,7 +190,9 @@ public class ChatActivity extends Activity implements OnClickListener,onKeyBorad
 
   private void sendMessage()
   {
-    IMMessage msg=new IMMessage("Gavin", "tag");
+    IMMessage msg=new IMMessage(mMsgEdit.getText().toString(), "tag");
+    MessageItem item=new MessageItem(msg.getNick(), msg.getMessage(), msg.getTime_samp(), false, msg.getHeadid());
+    adapter.addMessage(item);
     PushAsyncTask task=new PushAsyncTask();
     task.execute(new Gson().toJson(msg),user.getUserId(),new IPushMessageCallback()
     {
@@ -173,13 +200,13 @@ public class ChatActivity extends Activity implements OnClickListener,onKeyBorad
       @Override
       public void onSuccess()
       {
-        ToastUtils.AlertMessageInCenter("Good");
+        //ToastUtils.AlertMessageInCenter("Good");
       }
       
       @Override
       public void onFailure()
       {
-        ToastUtils.AlertMessageInBottom("Bad");
+        //ToastUtils.AlertMessageInBottom("Bad");
       }
     });
   }
@@ -304,6 +331,13 @@ public class ChatActivity extends Activity implements OnClickListener,onKeyBorad
   @Override
   public void onTextChanged(CharSequence s, int start, int before, int count)
   {
+    if(s.length()>0)
+    {
+      btnSend.setEnabled(true);
+    }else
+    {
+      btnSend.setEnabled(false);
+    }
   }
 
   @Override
@@ -311,7 +345,48 @@ public class ChatActivity extends Activity implements OnClickListener,onKeyBorad
   {
   }
   
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event)
+  {
+    if(keyCode==KeyEvent.KEYCODE_BACK )
+    {
+      if(face_panel!=null && face_panel.getVisibility()==View.VISIBLE)
+      {
+        face_panel.setVisibility(View.GONE);
+        return true;
+      }
+    }
+    return super.onKeyDown(keyCode, event);
+  }
+
+  @Override
+  public void onMessage(IMMessage msg)
+  {
+    MessageItem item=new MessageItem(msg.getNick(), msg.getMessage(), msg.getTime_samp(), true, msg.getHeadid());
+    adapter.addMessage(item);
+  }
+
+  @Override
+  public void onBind(Context context, int errorCode, String content)
+  {
+  }
+
+  @Override
+  public void onNotify(String title, String content)
+  {
+  }
+
+  @Override
+  public void onNetChange(boolean isNetConnected)
+  {
+  }
   
+  @Override
+  protected void onDestroy()
+  {
+    IMApplication.getInstance().getCallback().remove(this);
+    super.onDestroy();
+  }
 
 
 }

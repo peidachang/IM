@@ -72,7 +72,7 @@
                 android:layout_height="34.0dip"
                 android:layout_marginLeft="4.0dip"
                 android:background="@drawable/chat_bottombar_btn_selector"
-                android:enabled="true"
+                android:enabled="false"
                 android:shadowColor="#ff568ab5"
                 android:shadowDx="0.0"
                 android:shadowDy="-1.0"

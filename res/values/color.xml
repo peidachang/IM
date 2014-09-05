@@ -7,4 +7,8 @@
     <color name="black">@color/color_hei</color>
     <color name="color_hei">#ff000000</color>
     <drawable name="face_item_selector_pressed">#DDDDDD</drawable>
+    <color name="chat_time">@color/white</color>
+    <color name="thirty_transparent_black">#4d000000</color>
+    <color name="color_hei_8">#00000000</color>
+    <color name="semi_transparent_w">#7fffffff</color>
 </resources>
