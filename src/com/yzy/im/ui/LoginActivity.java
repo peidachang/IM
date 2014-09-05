@@ -94,10 +94,7 @@ public class LoginActivity extends Activity implements OnClickListener,IEventCal
   @Override
   public void onBind(Context context, int errorCode, String content)
   {
-    if(dialog!=null)
-    {
-      dialog.dismiss();
-    }
+    
     if(errorCode==0)
     {
       LogUtil.getLogger().v(content);
@@ -122,6 +119,10 @@ public class LoginActivity extends Activity implements OnClickListener,IEventCal
           @Override
           public void onSuccess()
           {
+            if(dialog!=null)
+            {
+              dialog.dismiss();
+            }
             Intent intent=new Intent(LoginActivity.this,MainActivity.class);
             LoginActivity.this.startActivity(intent);
           }
@@ -129,6 +130,10 @@ public class LoginActivity extends Activity implements OnClickListener,IEventCal
           @Override
           public void onFailure()
           {
+            if(dialog!=null)
+            {
+              dialog.dismiss();
+            }
             ToastUtils.AlertMessageInBottom("Login Failure");
           }
         });

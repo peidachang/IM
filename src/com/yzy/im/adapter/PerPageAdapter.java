@@ -15,6 +15,8 @@ import com.yzy.im.util.LogUtil;
 public class PerPageAdapter extends BaseAdapter
 {
   private static final String TAG = "PerPageAdapter";
+  public static final int ITEM_DEL=1;
+  public static final int ITEM_EMOJI=2;
   private ArrayList<Integer> faces;
   private Context mContext;
   
@@ -49,10 +51,19 @@ public class PerPageAdapter extends BaseAdapter
     if(contentView==null)
     {
       contentView=LayoutInflater.from(mContext).inflate(R.layout.faceitem, null);
+      
+    }
+    if(position==getCount()-1)
+    {
+      contentView.setTag(ITEM_DEL);
+    }else
+    {
+      contentView.setTag(ITEM_EMOJI);
     }
     ImageView img=(ImageView) contentView.findViewById(R.id.img_face);
-    LogUtil.getLogger().i("pos-->"+position+",and total is "+getCount());
+   
     if(img!=null)
+      LogUtil.getLogger().i("id-->"+faces.get(position));
       img.setImageResource(faces.get(position));
     return contentView;
   }

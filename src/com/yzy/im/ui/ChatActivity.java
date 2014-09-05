@@ -3,12 +3,29 @@ package com.yzy.im.ui;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.R.integer;
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextWatcher;
+import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 
@@ -21,21 +38,37 @@ import com.yzy.im.bean.IMMessage;
 import com.yzy.im.bean.User;
 import com.yzy.im.callback.IPushMessageCallback;
 import com.yzy.im.customview.CirclePageIndicator;
+import com.yzy.im.customview.InputLinearLayout;
 import com.yzy.im.customview.JazzyViewPager;
+import com.yzy.im.customview.InputLinearLayout.onKeyBoradListener;
 import com.yzy.im.model.PushAsyncTask;
 import com.yzy.im.util.LogUtil;
 import com.yzy.im.util.ToastUtils;
 
-public class ChatActivity extends Activity implements OnClickListener
+public class ChatActivity extends Activity implements OnClickListener,onKeyBoradListener,
+          OnItemClickListener,OnPageChangeListener,OnTouchListener,TextWatcher
 {
   private static final String TAG = "ChatActivity";
+  private static final int NUMOFEM=20;
+  private static final int NUMOFPERPAGE=21;
   private Button btnSend;
+  private EditText mMsgEdit;
   private User user;
   private ImageButton mImgBtn;
   private View face_panel;
+  private InputMethodManager imm;
   
   private JazzyViewPager mViewPager;
   private CirclePageIndicator mPageIndicator;
+  private InputLinearLayout root;
+  
+  private boolean isNeedShowFacePanel=false;
+  private boolean isKeyBoradShow=false;
+  
+  private int currentPage=0;
+  
+  private ArrayList<String> mFaceKeySet;
+  private ArrayList<Integer> mFaceValueSet;
   @Override
   protected void onCreate(Bundle savedInstanceState)
   {
@@ -49,21 +82,32 @@ public class ChatActivity extends Activity implements OnClickListener
   {
     btnSend=(Button)this.findViewById(R.id.send_btn);
     mImgBtn=(ImageButton)this.findViewById(R.id.face_btn);
+    mMsgEdit=(EditText)this.findViewById(R.id.msg_et);
     face_panel=this.findViewById(R.id.face_ll);
+    root=(InputLinearLayout) this.findViewById(R.id.root);
     btnSend.setOnClickListener(this);
     mImgBtn.setOnClickListener(this);
+    root.setOnKeyBoradListener(this);
     
     mViewPager=(JazzyViewPager)this.findViewById(R.id.face_pager);
     mPageIndicator=(CirclePageIndicator)this.findViewById(R.id.indicator);
+    mPageIndicator.setOnPageChangeListener(this);
+    mMsgEdit.addTextChangedListener(this);
     initFacePanel();
+    
+    //初始化输入法
+    imm=(InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
   }
   
   private void initFacePanel()
   {
      HashMap<String,Integer> mFaceMap=IMApplication.getInstance().getFaceMap();
+     //ArrayList<Integer> mFaceList=new ArrayList(mFaceMap.values());
+     mFaceKeySet=new ArrayList(mFaceMap.keySet());
+     mFaceValueSet=new ArrayList(mFaceMap.values());
      int size=mFaceMap.size();
      LogUtil.getLogger().i("size-->mFaceMap size is"+size);
-     int page=(size%21==0)?(size/21):(size/21+1);
+     int page=(size%NUMOFEM==0)?(size/NUMOFEM):(size/NUMOFEM+1);
      LogUtil.getLogger().i("size-->page size is"+page);
      ArrayList<View> views=new ArrayList<View>();
      for(int i=0;i<page;i++)
@@ -71,12 +115,20 @@ public class ChatActivity extends Activity implements OnClickListener
        LogUtil.getLogger().d("i-->"+i);
        View view=LayoutInflater.from(this).inflate(R.layout.face_layout, null);
        GridView grid=(GridView) view.findViewById(R.id.grid);
+       grid.setOnItemClickListener(this);
        LogUtil.getLogger().d("grid-->"+grid);
        ArrayList<Integer>  tmp=new ArrayList<Integer>();
-       for(int j=i*21;j<(i+1)*21 && j<mFaceMap.size();j++)
+       for(int j=i*NUMOFPERPAGE;j<(i+1)*NUMOFPERPAGE && j<=mFaceMap.size();j++)
        {
-         LogUtil.getLogger().d("j-->"+j);
-         tmp.add(mFaceMap.get(j));
+         if(j==((i+1)*NUMOFPERPAGE)-1||j==mFaceValueSet.size())
+         {
+           tmp.add(R.drawable.emotion_del_selector);
+         }
+         else
+         {
+           tmp.add(mFaceValueSet.get(j));
+         }
+          
        }
        PerPageAdapter adapter=new PerPageAdapter(this,tmp);
        grid.setAdapter(adapter);
@@ -97,7 +149,16 @@ public class ChatActivity extends Activity implements OnClickListener
     }else if(v.getId()==R.id.face_btn)
     {
       if(face_panel!=null)
-        face_panel.setVisibility(View.VISIBLE);
+        
+        if(isKeyBoradShow)
+        {
+          isNeedShowFacePanel=true;
+          //先隐藏键盘
+          imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }else
+        {
+          face_panel.setVisibility(View.VISIBLE);
+        }
     }
     
   }
@@ -122,4 +183,135 @@ public class ChatActivity extends Activity implements OnClickListener
       }
     });
   }
+
+  @Override
+  public void onKeyBoardShow()
+  {
+    LogUtil.getLogger().d("keyborad-->show");
+    isKeyBoradShow=true;
+    face_panel.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void onKeyBoardHide()
+  {
+    LogUtil.getLogger().d("keyborad-->hide");
+    isKeyBoradShow=false;
+    if(isNeedShowFacePanel)
+    {
+      face_panel.setVisibility(View.VISIBLE);
+      isNeedShowFacePanel=false;
+    }
+  }
+
+  @Override
+  public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+  {
+    //这段代码的逻辑来自way
+    if((Integer)view.getTag()==PerPageAdapter.ITEM_DEL)
+    {
+      //点击删除
+      int selectPos=mMsgEdit.getSelectionStart();//获取光标的位置
+      //等于0就没有必要删除
+      if(selectPos>0)
+      {
+        String content=mMsgEdit.getText().toString();
+        String text=content.substring(selectPos-1);
+        if(text.equals("]"))
+        {
+          int start=content.lastIndexOf("[");
+          int end=selectPos;
+          mMsgEdit.getText().delete(start,end);
+          return;
+        }
+        
+        mMsgEdit.getText().delete(selectPos-1,selectPos);
+      }
+      
+    }else
+    {
+      //点击Emoji
+      int which=currentPage*NUMOFEM+position;
+      if(which<mFaceValueSet.size())
+      {
+        Bitmap bitmap=BitmapFactory.decodeResource(this.getResources(), mFaceValueSet.get(which));
+        if(bitmap!=null)
+        {
+          int rawHeight=bitmap.getHeight();
+          int rawWidth=bitmap.getWidth();
+          
+          int newHeight=40;
+          int newWidth=40;
+          
+          
+       // 计算缩放因子
+          float heightScale = ((float) newHeight) / rawHeight;
+          float widthScale = ((float) newWidth) / rawWidth;
+          
+          Matrix matrix = new Matrix();
+          matrix.postScale(heightScale, widthScale);
+          
+          Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+              rawWidth, rawHeight, matrix, true);
+          
+          ImageSpan imgSpan=new ImageSpan(this, newBitmap);
+          String emojiStr=mFaceKeySet.get(which);
+          
+          SpannableString spanString=new SpannableString(emojiStr);
+          spanString.setSpan(imgSpan, emojiStr.indexOf("["), emojiStr.indexOf("]")+1,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+          mMsgEdit.getText().append(spanString);
+        }else
+        {
+          String ori = mMsgEdit.getText().toString();
+          int index = mMsgEdit.getSelectionStart();
+          StringBuilder stringBuilder = new StringBuilder(ori);
+          stringBuilder.insert(index, mFaceKeySet.get(which));
+          mMsgEdit.setText(stringBuilder.toString());
+          mMsgEdit.setSelection(index + mFaceKeySet.get(which).length());
+        }
+      }
+      
+    }
+  }
+
+  @Override
+  public void onPageScrollStateChanged(int arg0)
+  {
+  }
+
+  @Override
+  public void onPageScrolled(int arg0, float arg1, int arg2)
+  {
+  }
+
+  @Override
+  public void onPageSelected(int position)
+  {
+     currentPage=position;
+  }
+
+  @Override
+  public boolean onTouch(View v, MotionEvent event)
+  {
+    return false;
+  }
+
+  @Override
+  public void beforeTextChanged(CharSequence s, int start, int count, int after)
+  {
+  }
+
+  @Override
+  public void onTextChanged(CharSequence s, int start, int before, int count)
+  {
+  }
+
+  @Override
+  public void afterTextChanged(Editable s)
+  {
+  }
+  
+  
+
+
 }
