@@ -45,19 +45,23 @@ public class PushAsyncTask extends AsyncTask<Object, Void, String>
   @Override
   protected void onPostExecute(String result)
   {
-    
-    if( callback!=null && result!=null)
+    if(callback!=null)
     {
-      if(result.contains(IConstants.SEND_MSG_ERROR))
+      if( result!=null)
       {
-          callback.onFailure();
+        if(result.contains(IConstants.SEND_MSG_ERROR))
+        {
+            callback.onFailure();
+        }else
+        {
+            callback.onSuccess();
+        }
       }else
       {
-          callback.onSuccess();
+        callback.onFailure();
       }
-    }else
-    {
-      callback.onFailure();
     }
+    
+    
   }
 }

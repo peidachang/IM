@@ -3,14 +3,15 @@ package com.yzy.im.ui;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
-import android.os.Message;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -18,10 +19,14 @@ import android.text.TextWatcher;
 import android.text.style.ImageSpan;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -40,24 +45,23 @@ import com.yzy.im.bean.IMMessage;
 import com.yzy.im.bean.MessageItem;
 import com.yzy.im.bean.User;
 import com.yzy.im.callback.IEventCallback;
-import com.yzy.im.callback.IPushMessageCallback;
 import com.yzy.im.customview.CirclePageIndicator;
 import com.yzy.im.customview.InputLinearLayout;
 import com.yzy.im.customview.InputLinearLayout.onKeyBoradListener;
 import com.yzy.im.customview.JazzyViewPager;
 import com.yzy.im.customview.MsgListView;
-import com.yzy.im.customview.XListViewFooter;
 import com.yzy.im.model.PushAsyncTask;
+import com.yzy.im.server.IConstants;
 import com.yzy.im.util.LogUtil;
-import com.yzy.im.util.ToastUtils;
 
-public class ChatActivity extends Activity implements OnClickListener,onKeyBoradListener,
+public class ChatActivity extends ActionBarActivity implements OnClickListener,onKeyBoradListener,
           OnItemClickListener,OnPageChangeListener,OnTouchListener,TextWatcher,IEventCallback
 {
   private static final String TAG = "ChatActivity";
   private static final int NUMOFEM=20;
   private static final int NUMOFPERPAGE=21;
   private Button btnSend;
+  private Button btnShake;
   private EditText mMsgEdit;
   private User user;
   private ImageButton mImgBtn;
@@ -85,6 +89,10 @@ public class ChatActivity extends Activity implements OnClickListener,onKeyBorad
     IMApplication.getInstance().getCallback().add(this);
     initView();
     user=(User) this.getIntent().getSerializableExtra("user");
+    ActionBar actionBar=this.getSupportActionBar();
+    actionBar.setDisplayHomeAsUpEnabled(true);
+    actionBar.setTitle(user.getNick());
+    actionBar.setDisplayShowCustomEnabled(true);
   }
   
   private void initView()
@@ -184,8 +192,19 @@ public class ChatActivity extends Activity implements OnClickListener,onKeyBorad
         {
           face_panel.setVisibility(View.VISIBLE);
         }
+    }else if(v.getId()==R.id.send_shake)
+    {
+      //ToastUtils.AlertMessageInBottom("Shake");
+     sendShake();
     }
     
+  }
+  
+  private void sendShake()
+  {
+    IMMessage msg=new IMMessage(IConstants.MSG_SHAKE, "tag");
+    PushAsyncTask task=new PushAsyncTask();
+    task.execute(new Gson().toJson(msg),user.getUserId(),null);
   }
 
   private void sendMessage()
@@ -194,21 +213,7 @@ public class ChatActivity extends Activity implements OnClickListener,onKeyBorad
     MessageItem item=new MessageItem(msg.getNick(), msg.getMessage(), msg.getTime_samp(), false, msg.getHeadid());
     adapter.addMessage(item);
     PushAsyncTask task=new PushAsyncTask();
-    task.execute(new Gson().toJson(msg),user.getUserId(),new IPushMessageCallback()
-    {
-      
-      @Override
-      public void onSuccess()
-      {
-        //ToastUtils.AlertMessageInCenter("Good");
-      }
-      
-      @Override
-      public void onFailure()
-      {
-        //ToastUtils.AlertMessageInBottom("Bad");
-      }
-    });
+    task.execute(new Gson().toJson(msg),user.getUserId(),null);
   }
 
   @Override
@@ -367,8 +372,21 @@ public class ChatActivity extends Activity implements OnClickListener,onKeyBorad
   @Override
   public void onMessage(IMMessage msg)
   {
-    MessageItem item=new MessageItem(msg.getNick(), msg.getMessage(), msg.getTime_samp(), true, msg.getHeadid());
-    adapter.addMessage(item);
+    //只处理自己的消息，别人的消息不处理
+    if(msg.getUserid().equals(user.getUserId()))
+    {
+      MessageItem item=new MessageItem(msg.getNick(), msg.getMessage(), msg.getTime_samp(), true, msg.getHeadid());
+      if(item.getMessage().equals(IConstants.MSG_SHAKE))
+      {
+        Animation anim=AnimationUtils.loadAnimation(this, R.anim.shakeanim);
+        root.startAnimation(anim);
+      }else if(!item.getMessage().equals(IConstants.MSG_NEW_USER))
+      {
+        adapter.addMessage(item);
+      }
+    }
+   
+    
   }
 
   @Override
@@ -391,6 +409,20 @@ public class ChatActivity extends Activity implements OnClickListener,onKeyBorad
   {
     IMApplication.getInstance().getCallback().remove(this);
     super.onDestroy();
+  }
+  
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu)
+  {
+    getMenuInflater().inflate(R.menu.main, menu);
+    MenuItem item= menu.findItem(R.id.action_shake);
+    //在2.x版本中通过这种方式
+    btnShake=(Button) MenuItemCompat.getActionView(item).findViewById(R.id.send_shake);
+    //3.0以后版本可以使用这种方式
+    //btnShake=(Button)item.getActionView().findViewById(R.id.send_shake);
+   
+    btnShake.setOnClickListener(this);
+    return super.onCreateOptionsMenu(menu);
   }
 
 

@@ -84,7 +84,15 @@ public interface IConstants
   public final static String PUSH_TYPE_ALL = "3";
   
   public static final String SEND_MSG_ERROR = "send_msg_error";
+  //特殊的消息
+  /**
+   * 新用户上线
+   */
   public static final String MSG_NEW_USER="*#*#%&";
+  /**
+   * 发送窗口抖动
+   */
+  public static final String MSG_SHAKE="#*#*&%";
   
   
   public static final String mapikey="v39ZGSe6lOZlPLGAQyVeCmCd";
