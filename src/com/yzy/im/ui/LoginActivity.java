@@ -52,6 +52,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener,IEven
   {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.login_layout);
+    //显示ActionBar的返回按钮
     this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
   }
   
@@ -61,6 +62,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener,IEven
   {
     if(view==btnRegister)
     {
+      //后期添加注册逻辑
       ToastUtils.AlertMessageInBottom("注册");
     }
   }
@@ -73,9 +75,9 @@ public class LoginActivity extends BaseActivity implements OnClickListener,IEven
       return ;
     }else
     {
+      PushManager.startWork(this, PushConstants.LOGIN_TYPE_API_KEY,IConstants.mapikey);
       IMApplication.getInstance().getSharePreference().setNick(mName.getText().toString());
       IMApplication.getInstance().getSharePreference().setHeadId(R.drawable.h0);
-      PushManager.startWork(this, PushConstants.LOGIN_TYPE_API_KEY,IConstants.mapikey);
       dialog=DialogUtils.createProcgressDialog(this,CommonUtil.getStringById(R.string.login_loading));
     }
   }

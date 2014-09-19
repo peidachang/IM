@@ -58,7 +58,7 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
     AppManager.getInstance().addActivity(this);
     initView();
     //添加测试数据
-    addTestData();
+    addGroupData();
     
     adapter=new TreeViewAdapter(this,groups, mChilds,xListView);
     xListView.setAdapter(adapter);
@@ -194,7 +194,7 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
     super.onDestroy();
   }
   
-  private void addTestData()
+  private void addGroupData()
   {
     groups=new ArrayList<String>();
     String tmpgroup=IMConfiguration.getProperty("group");
