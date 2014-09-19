@@ -18,6 +18,7 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.FrameLayout;
 import android.widget.PopupWindow.OnDismissListener;
 
+import com.yzy.im.AppManager;
 import com.yzy.im.IMApplication;
 import com.yzy.im.R;
 import com.yzy.im.adapter.TreeViewAdapter;
@@ -51,8 +52,10 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
   public void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
-    IMApplication.getInstance().getCallback().add(this);
     setContentView(R.layout.activity_main);
+    //由于此Activity没有继承BaseActivity,所以需要单独添加
+    IMApplication.getInstance().addEventCallback(this);
+    AppManager.getInstance().addActivity(this);
     initView();
     //添加测试数据
     addTestData();
@@ -186,7 +189,8 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
   @Override
   protected void onDestroy()
   {
-    IMApplication.getInstance().getCallback().remove(this);
+    IMApplication.getInstance().removeEventCallback(this);
+    AppManager.getInstance().removeActivity(this);
     super.onDestroy();
   }
   

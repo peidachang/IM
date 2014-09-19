@@ -27,7 +27,7 @@
         android:name="com.yzy.im.IMApplication"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/MyActionBarStyle" >
         <activity  android:name="com.yzy.im.ui.SplashActivity">
              <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

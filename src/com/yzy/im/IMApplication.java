@@ -45,6 +45,16 @@ public class IMApplication extends FrontiaApplication
     return callbacks;
   }
   
+  public void addEventCallback(IEventCallback callback)
+  {
+    callbacks.add(callback);
+  }
+  
+  public void removeEventCallback(IEventCallback callback)
+  {
+    callbacks.remove(callback);
+  }
+  
   @Override
   public void onCreate()
   {

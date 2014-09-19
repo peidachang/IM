@@ -11,4 +11,6 @@
     <color name="thirty_transparent_black">#4d000000</color>
     <color name="color_hei_8">#00000000</color>
     <color name="semi_transparent_w">#7fffffff</color>
+    
+    <item type="drawable" name="actionbar_back">#777777</item>
 </resources>

@@ -3,21 +3,25 @@ package com.yzy.im.ui;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.widget.Button;
 
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
 import com.google.gson.Gson;
+import com.yzy.im.AppManager;
 import com.yzy.im.IMApplication;
 import com.yzy.im.R;
+import com.yzy.im.annotation.InjectView;
 import com.yzy.im.bean.IMMessage;
 import com.yzy.im.callback.IEventCallback;
 import com.yzy.im.callback.IPushMessageCallback;
@@ -29,67 +33,53 @@ import com.yzy.im.util.DialogUtils;
 import com.yzy.im.util.LogUtil;
 import com.yzy.im.util.ToastUtils;
 
-public class LoginActivity extends Activity implements OnClickListener,IEventCallback
+public class LoginActivity extends BaseActivity implements OnClickListener,IEventCallback
 {
   private static final String TAG = "LoginActivity";
+  @InjectView(id=R.id.username)
   private ClearEditText mName;
+  
+  @InjectView(id=R.id.password)
   private ClearEditText mpwd;
+  
+  @InjectView(id=R.id.login,click="onClickLogin")
   private Button btnLogin;
+  
+  private Button btnRegister;
   private ProgressDialog dialog;
   @Override
   protected void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
-    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
     this.setContentView(R.layout.login_layout);
-    initView();
-    IMApplication.getInstance().getCallback().add(this);
+    this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
   }
   
-  private void initView()
-  {
-    mName=(ClearEditText)this.findViewById(R.id.username);
-    mpwd=(ClearEditText)this.findViewById(R.id.password);
-    btnLogin=(Button)this.findViewById(R.id.login);
-    btnLogin.setOnClickListener(this);
-  }
 
   @Override
   public void onClick(View view)
   {
-    if(view.getId()==R.id.login)
+    if(view==btnRegister)
     {
-      if(mName.getText().length()==0 || mpwd.getText().length()==0)
-      {
-        ToastUtils.AlertMessageInBottom(R.string.name_pwd_notnull);
-        return ;
-      }else
-      {
-        IMApplication.getInstance().getSharePreference().setNick(mName.getText().toString());
-        IMApplication.getInstance().getSharePreference().setHeadId(R.drawable.h0);
-        PushManager.startWork(this, PushConstants.LOGIN_TYPE_API_KEY,IConstants.mapikey);
-        dialog=DialogUtils.createProcgressDialog(this,CommonUtil.getStringById(R.string.login_loading));
-      }
-      
+      ToastUtils.AlertMessageInBottom("注册");
     }
   }
-
-  @Override
-  public void onMessage(IMMessage message)
+  
+  public void onClickLogin(View view)
   {
+    if(mName.getText().length()==0 || mpwd.getText().length()==0)
+    {
+      ToastUtils.AlertMessageInBottom(R.string.name_pwd_notnull);
+      return ;
+    }else
+    {
+      IMApplication.getInstance().getSharePreference().setNick(mName.getText().toString());
+      IMApplication.getInstance().getSharePreference().setHeadId(R.drawable.h0);
+      PushManager.startWork(this, PushConstants.LOGIN_TYPE_API_KEY,IConstants.mapikey);
+      dialog=DialogUtils.createProcgressDialog(this,CommonUtil.getStringById(R.string.login_loading));
+    }
   }
-
-
-
-  @Override
-  public void onNotify(String title, String content)
-  {
-  }
-
-  @Override
-  public void onNetChange(boolean isNetConnected)
-  {
-  }
+  
 
   @Override
   public void onBind(Context context, int errorCode, String content)
@@ -152,8 +142,31 @@ public class LoginActivity extends Activity implements OnClickListener,IEventCal
   @Override
   protected void onDestroy()
   {
-    IMApplication.getInstance().getCallback().remove(this);
     super.onDestroy();
+  }
+  
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu)
+  {
+    getMenuInflater().inflate(R.menu.login, menu);
+    MenuItem item=menu.findItem(R.id.action_register);
+    btnRegister=(Button)MenuItemCompat.getActionView(item).findViewById(R.id.action_right);
+    btnRegister.setText(R.string.register);
+    btnRegister.setBackgroundResource(R.drawable.login_button_bg);
+    btnRegister.setOnClickListener(this);
+    return super.onCreateOptionsMenu(menu);
+  }
+  
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item)
+  {
+    switch(item.getItemId())
+    {
+      case android.R.id.home:
+        AppManager.getInstance().exitApp(false);
+        return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 
 

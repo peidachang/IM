@@ -4,7 +4,7 @@
         android:id="@+id/action_shake"
         android:orderInCategory="100"
         app:showAsAction="always"
-        app:actionLayout="@layout/shake_layout"
+        app:actionLayout="@layout/action_right_layout"
         />
 
 </menu>

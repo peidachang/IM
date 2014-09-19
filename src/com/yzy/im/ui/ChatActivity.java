@@ -54,7 +54,7 @@ import com.yzy.im.model.PushAsyncTask;
 import com.yzy.im.server.IConstants;
 import com.yzy.im.util.LogUtil;
 
-public class ChatActivity extends ActionBarActivity implements OnClickListener,onKeyBoradListener,
+public class ChatActivity extends BaseActivity implements OnClickListener,onKeyBoradListener,
           OnItemClickListener,OnPageChangeListener,OnTouchListener,TextWatcher,IEventCallback
 {
   private static final String TAG = "ChatActivity";
@@ -86,7 +86,6 @@ public class ChatActivity extends ActionBarActivity implements OnClickListener,o
   {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.chat_layout);
-    IMApplication.getInstance().getCallback().add(this);
     initView();
     user=(User) this.getIntent().getSerializableExtra("user");
     ActionBar actionBar=this.getSupportActionBar();
@@ -192,7 +191,7 @@ public class ChatActivity extends ActionBarActivity implements OnClickListener,o
         {
           face_panel.setVisibility(View.VISIBLE);
         }
-    }else if(v.getId()==R.id.send_shake)
+    }else if(v.getId()==R.id.action_right)
     {
       //ToastUtils.AlertMessageInBottom("Shake");
      sendShake();
@@ -407,7 +406,6 @@ public class ChatActivity extends ActionBarActivity implements OnClickListener,o
   @Override
   protected void onDestroy()
   {
-    IMApplication.getInstance().getCallback().remove(this);
     super.onDestroy();
   }
   
@@ -417,13 +415,15 @@ public class ChatActivity extends ActionBarActivity implements OnClickListener,o
     getMenuInflater().inflate(R.menu.main, menu);
     MenuItem item= menu.findItem(R.id.action_shake);
     //在2.x版本中通过这种方式
-    btnShake=(Button) MenuItemCompat.getActionView(item).findViewById(R.id.send_shake);
+    btnShake=(Button) MenuItemCompat.getActionView(item).findViewById(R.id.action_right);
     //3.0以后版本可以使用这种方式
     //btnShake=(Button)item.getActionView().findViewById(R.id.send_shake);
-   
+    btnShake.setText(R.string.send_shake);
     btnShake.setOnClickListener(this);
     return super.onCreateOptionsMenu(menu);
   }
+  
+  
 
 
 }
