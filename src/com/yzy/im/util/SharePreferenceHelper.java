@@ -17,6 +17,8 @@ public class SharePreferenceHelper
   public static final String KEY_HEAD_ID="headId";
   public static final String KEY_APP_ID="appid";
   
+  public static final String KEY_TALK_USER_ID="takluserId";
+  
   private static SharePreferenceHelper instance=null;
   
   private SharedPreferences sp;
@@ -41,7 +43,7 @@ public class SharePreferenceHelper
   
   private void setStringValue(String key,String value)
   {
-    if(!TextUtils.isEmpty(key)&& !TextUtils.isEmpty(value))
+    if(!TextUtils.isEmpty(key))
     {
       editor=sp.edit();
       editor.putString(key, value);
@@ -129,6 +131,17 @@ public class SharePreferenceHelper
   public void setAppId(String appId)
   {
     setStringValue(KEY_APP_ID, appId);
+  }
+  
+  
+  public String getTalkUserId()
+  {
+    return getStringVaule(KEY_TALK_USER_ID, null);
+  }
+  
+  public void setTalkUserId(String talkUserId)
+  {
+    setStringValue(KEY_TALK_USER_ID, talkUserId);
   }
   
 

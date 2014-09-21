@@ -52,6 +52,7 @@ import com.yzy.im.customview.MsgListView;
 import com.yzy.im.model.PushAsyncTask;
 import com.yzy.im.server.IConstants;
 import com.yzy.im.util.LogUtil;
+import com.yzy.im.util.SharePreferenceHelper;
 
 public class ChatActivity extends BaseActivity implements OnClickListener,onKeyBoradListener,
           OnItemClickListener,OnPageChangeListener,OnTouchListener,TextWatcher,IEventCallback
@@ -85,11 +86,15 @@ public class ChatActivity extends BaseActivity implements OnClickListener,onKeyB
   {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.chat_layout);
+    
     initView();
     user=(User) this.getIntent().getSerializableExtra("user");
+    SharePreferenceHelper.getInstance(this).setTalkUserId(user.getUserId());
     ActionBar actionBar=this.getSupportActionBar();
     actionBar.setDisplayHomeAsUpEnabled(true);
-    actionBar.setTitle(user.getNick());
+    String data = getResources().getString(R.string.talk_with);
+    data = String.format(data,user.getNick());
+    actionBar.setTitle(data);
     actionBar.setDisplayShowCustomEnabled(true);
   }
   
@@ -124,6 +129,19 @@ public class ChatActivity extends BaseActivity implements OnClickListener,onKeyB
     mListView.setPullLoadEnable(false);
     mListView.setPullRefreshEnable(false);
     ArrayList<MessageItem> msgs=new ArrayList<MessageItem>();
+    //如果从Notification过来的，则需要显示
+    IMMessage notification=(IMMessage) this.getIntent().getSerializableExtra("msg");
+    if(notification!=null)
+    {
+     
+      MessageItem item=new MessageItem(notification.getNick(), notification.getMessage(), notification.getTime_samp(), true, notification.getHeadid());
+      msgs.add(item);
+      
+      String data = getResources().getString(R.string.talk_with);
+      data = String.format(data,notification.getNick());
+      this.getSupportActionBar().setTitle(data);
+    }
+   
     adapter=new MessageAdapter(msgs, this);
     mListView.setAdapter(adapter);
   }
@@ -371,6 +389,8 @@ public class ChatActivity extends BaseActivity implements OnClickListener,onKeyB
   public void onMessage(IMMessage msg)
   {
     //只处理自己的消息，别人的消息不处理
+    if(msg.getMessage().equals(IConstants.MSG_NEW_USER) || msg.getMessage().equals(IConstants.MSG_NEW_USER_REPLY))
+      return;
     if(msg.getUserid().equals(user.getUserId()))
     {
       MessageItem item=new MessageItem(msg.getNick(), msg.getMessage(), msg.getTime_samp(), true, msg.getHeadid());
@@ -378,7 +398,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener,onKeyB
       {
         Animation anim=AnimationUtils.loadAnimation(this, R.anim.shakeanim);
         root.startAnimation(anim);
-      }else if(!item.getMessage().equals(IConstants.MSG_NEW_USER))
+      }else
       {
         adapter.addMessage(item);
       }
@@ -406,6 +426,10 @@ public class ChatActivity extends BaseActivity implements OnClickListener,onKeyB
   protected void onDestroy()
   {
     super.onDestroy();
+    //清空当前的聊天对象
+    user=null;
+    SharePreferenceHelper.getInstance(this).setTalkUserId(null);
+   
   }
   
   @Override

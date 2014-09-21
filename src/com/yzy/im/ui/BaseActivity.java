@@ -6,7 +6,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 
-import com.yzy.im.AppManager;
 import com.yzy.im.IMApplication;
 import com.yzy.im.annotation.Injector;
 import com.yzy.im.bean.IMMessage;
@@ -24,15 +23,15 @@ public class BaseActivity extends ActionBarActivity implements IEventCallback
   protected void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
-    AppManager.getInstance().addActivity(this);
     IMApplication.getInstance().addEventCallback(this);
+    IMApplication.getInstance().addActivity(this);
   }
   
   @Override
   protected void onDestroy()
   {
-    AppManager.getInstance().removeActivity(this);
     IMApplication.getInstance().removeEventCallback(this);
+    IMApplication.getInstance().removeActivity(this);
     super.onDestroy();
   }
 

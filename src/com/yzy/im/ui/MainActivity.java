@@ -10,15 +10,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.FrameLayout;
 import android.widget.PopupWindow.OnDismissListener;
 
-import com.yzy.im.AppManager;
+import com.google.gson.Gson;
 import com.yzy.im.IMApplication;
 import com.yzy.im.R;
 import com.yzy.im.adapter.TreeViewAdapter;
@@ -30,10 +32,14 @@ import com.yzy.im.customview.IphoneTreeView;
 import com.yzy.im.customview.QuickAction;
 import com.yzy.im.customview.QuickActionBar;
 import com.yzy.im.customview.QuickActionWidget;
+import com.yzy.im.model.PushAsyncTask;
 import com.yzy.im.server.IConstants;
+import com.yzy.im.server.IMManager;
 import com.yzy.im.slidemenu.BaseSlidingFragmentActivity;
 import com.yzy.im.slidemenu.SlidingMenu;
 import com.yzy.im.util.CommonUtil;
+import com.yzy.im.util.SharePreferenceHelper;
+import com.yzy.im.util.ToastUtils;
 
 @SuppressLint("NewApi")
 public class MainActivity extends BaseSlidingFragmentActivity implements IEventCallback,OnDismissListener
@@ -53,14 +59,16 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
   {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    //由于此Activity没有继承BaseActivity,所以需要单独添加
-    IMApplication.getInstance().addEventCallback(this);
-    AppManager.getInstance().addActivity(this);
+    this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     initView();
     //添加测试数据
     addGroupData();
     
     adapter=new TreeViewAdapter(this,groups, mChilds,xListView);
+    
+    //将自己加入到我的好友
+    User user=new User(SharePreferenceHelper.getInstance(this).getUserId(),SharePreferenceHelper.getInstance(this).getChannelId(),SharePreferenceHelper.getInstance(this).getNick());
+    mChilds.get(0).add(user);
     xListView.setAdapter(adapter);
     addLeft();
     
@@ -97,8 +105,12 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
       {
         Intent intent=new Intent(MainActivity.this,ChatActivity.class);
         User user=mChilds.get(groupPosition).get(childPosition);
-        intent.putExtra("user", user);
-        MainActivity.this.startActivity(intent);
+        //判断该用户是否是自己
+        if(!user.getUserId().equals(SharePreferenceHelper.getInstance(MainActivity.this).getUserId())){
+          intent.putExtra("user", user);
+          MainActivity.this.startActivity(intent);
+        }
+        
         return true;
       }
     });
@@ -162,11 +174,30 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
   @Override
   public void onMessage(IMMessage message)
   {
+    //新用户消息
     if(message.getMessage().equals(IConstants.MSG_NEW_USER))
     {
       User user=new User(message.getUserid(),message.getChannelid(),message.getNick());
-      mChilds.get(Integer.valueOf(user.getGroup())).add(user);
-      adapter.notifyDataSetChanged();
+      if(!message.getUserid().equals(SharePreferenceHelper.getInstance(this).getUserId()))
+      {
+        mChilds.get(Integer.valueOf(user.getGroup())).add(user);
+        adapter.notifyDataSetChanged();
+        
+        //发送回复
+        IMMessage reply=new IMMessage(IConstants.MSG_NEW_USER_REPLY, "tag");
+        PushAsyncTask task=new PushAsyncTask();
+        task.execute(new Gson().toJson(reply),user.getUserId(),null);
+      }
+      
+    }else if(message.getMessage().equals(IConstants.MSG_NEW_USER_REPLY))
+    {
+      //回复消息
+      User user=new User(message.getUserid(),message.getChannelid(),message.getNick());
+      if(!message.getUserid().equals(SharePreferenceHelper.getInstance(this).getUserId()))
+      {
+        mChilds.get(Integer.valueOf(user.getGroup())).add(user);
+        adapter.notifyDataSetChanged();
+      }
     }
   }
 
@@ -174,6 +205,7 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
   @Override
   public void onNotify(String title, String content)
   {
+    ToastUtils.AlertMessageInBottom("title-->"+title);
   }
 
   @Override
@@ -189,8 +221,6 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
   @Override
   protected void onDestroy()
   {
-    IMApplication.getInstance().removeEventCallback(this);
-    AppManager.getInstance().removeActivity(this);
     super.onDestroy();
   }
   
@@ -218,5 +248,15 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
       mQuickAction.clearAllQuickActions();
       mQuickAction=null;
     }
+  }
+  
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item)
+  {
+    if(item.getItemId()==android.R.id.home)
+    {
+      toggle();
+    }
+    return super.onOptionsItemSelected(item);
   }
 }

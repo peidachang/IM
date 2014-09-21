@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +17,6 @@ import android.widget.Button;
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
 import com.google.gson.Gson;
-import com.yzy.im.AppManager;
 import com.yzy.im.IMApplication;
 import com.yzy.im.R;
 import com.yzy.im.annotation.InjectView;
@@ -165,7 +163,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener,IEven
     switch(item.getItemId())
     {
       case android.R.id.home:
-        AppManager.getInstance().exitApp(false);
+        IMApplication.getInstance().exitApp(false);
         return true;
     }
     return super.onOptionsItemSelected(item);

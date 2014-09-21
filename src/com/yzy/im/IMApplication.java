@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import android.app.Activity;
+
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
 import com.baidu.frontia.FrontiaApplication;
 import com.yzy.im.callback.IEventCallback;
 import com.yzy.im.server.IConstants;
+import com.yzy.im.ui.BaseActivity;
 import com.yzy.im.util.SharePreferenceHelper;
 
 public class IMApplication extends FrontiaApplication
@@ -19,6 +22,7 @@ public class IMApplication extends FrontiaApplication
   private SharePreferenceHelper sp=null;
   private HashMap<String,Integer> mFaceMap=new LinkedHashMap<String, Integer>();
   private ArrayList<IEventCallback> callbacks=new ArrayList<IEventCallback>();
+  private ArrayList<BaseActivity> stacks=new ArrayList<BaseActivity>();
   
   public static IMApplication getInstance()
   {
@@ -56,6 +60,16 @@ public class IMApplication extends FrontiaApplication
   public void removeEventCallback(IEventCallback callback)
   {
     callbacks.remove(callback);
+  }
+  
+  public void addActivity(BaseActivity activity)
+  {
+    stacks.add(activity);
+  }
+  
+  public void removeActivity(BaseActivity activity)
+  {
+    stacks.remove(activity);
   }
   
   @Override
@@ -181,5 +195,21 @@ public class IMApplication extends FrontiaApplication
 
     mFaceMap.put("[右太极]", R.drawable.f105);
     mFaceMap.put("[闭嘴]", R.drawable.f106);
+  }
+  
+  
+  public void exitApp(boolean backrund)
+  {
+    for(BaseActivity activity :stacks)
+    {
+      activity.finish();
+    }
+    
+    if(!backrund)
+    {
+      System.exit(0);
+    }
+    
+   
   }
 }

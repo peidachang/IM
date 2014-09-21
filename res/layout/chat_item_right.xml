@@ -23,7 +23,7 @@
         android:text="11:11"
         android:textColor="@color/chat_time"
         android:textSize="10.0sp"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <LinearLayout
         android:layout_width="match_parent"

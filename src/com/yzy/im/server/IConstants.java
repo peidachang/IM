@@ -89,6 +89,8 @@ public interface IConstants
    * 新用户上线
    */
   public static final String MSG_NEW_USER="*#*#%&";
+  
+  public static final String MSG_NEW_USER_REPLY="*#*#%&*#*#%&";
   /**
    * 发送窗口抖动
    */

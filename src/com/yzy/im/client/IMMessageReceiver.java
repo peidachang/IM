@@ -1,19 +1,34 @@
 package com.yzy.im.client;
 
+import java.lang.annotation.Annotation;
+
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
+import android.widget.RemoteViews;
+import android.widget.RemoteViews.RemoteView;
 
 import com.baidu.android.pushservice.PushConstants;
 import com.google.gson.Gson;
 import com.yzy.im.IMApplication;
+import com.yzy.im.R;
 import com.yzy.im.bean.IMMessage;
+import com.yzy.im.bean.User;
 import com.yzy.im.callback.IEventCallback;
+import com.yzy.im.server.IConstants;
+import com.yzy.im.ui.ChatActivity;
 import com.yzy.im.util.LogUtil;
+import com.yzy.im.util.SharePreferenceHelper;
 
 public class IMMessageReceiver extends BroadcastReceiver
 {
   private static final String TAG = "IMMessageReceiver";
+  private NotificationCompat.Builder mBuilder;
+  private NotificationManager mNotificationManager;
 
   @Override
   public void onReceive(Context context, Intent intent)
@@ -22,15 +37,37 @@ public class IMMessageReceiver extends BroadcastReceiver
     {
       return ;
     }
+    //用户接收到消息
     if(intent.getAction().equals(PushConstants.ACTION_MESSAGE))
     {
       String msg=intent.getExtras().getString(PushConstants.EXTRA_PUSH_MESSAGE_STRING);
       LogUtil.getLogger().i("[Message->]"+msg);
       Gson json=new Gson();
-      for(IEventCallback callback:IMApplication.getInstance().getCallback())
+      IMMessage iMsg=json.fromJson(msg,  IMMessage.class);
+      //如果是新用户消息或者回应消息，则调用所有callback的onMessage方法
+      if(iMsg.getMessage().equals(IConstants.MSG_NEW_USER)||iMsg.getMessage().equals(IConstants.MSG_NEW_USER_REPLY))
       {
-        callback.onMessage(json.fromJson(msg, IMMessage.class));
+        for(IEventCallback callback:IMApplication.getInstance().getCallback())
+        {
+          callback.onMessage(iMsg);
+        }
+      }else
+      {
+        LogUtil.getLogger().d("talk user id-->"+SharePreferenceHelper.getInstance(context).getTalkUserId());
+        //正常信息就判断是否正在和它聊天，如果正在聊则直接显示，否则使用Notification显示
+        if(SharePreferenceHelper.getInstance(context).getTalkUserId()==null||!SharePreferenceHelper.getInstance(context).getTalkUserId().equals(iMsg.getUserid()))
+        {
+            LogUtil.getLogger().d("start showNotificationMesage");
+            showNotificationMessage(context, iMsg);
+        }else
+        {
+          for(IEventCallback callback:IMApplication.getInstance().getCallback())
+          {
+            callback.onMessage(iMsg);
+          }
+        }
       }
+      
       
     }else if(intent.getAction().equals(PushConstants.ACTION_RECEIVE))
     {
@@ -53,5 +90,54 @@ public class IMMessageReceiver extends BroadcastReceiver
     {
       
     }
+  }
+  
+  private void showNotificationMessage(Context context,IMMessage message)
+  {
+    /**
+     * //1得到一个notificationManager
+    //得到一个notification的服务
+     NotificationManager manager=(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+     //2Instantiate  the Notification
+     Notification  notification=new Notification(R.drawable.ic_launcher, "tickerText", System.currentTimeMillis());
+     
+     notification.sound=Uri.fromFile(new File("/sdcard/haha.mp3"));//指定声音
+     notification.flags=Notification.FLAG_AUTO_CANCEL;//notification显示完自动清空
+     notification.flags=Notification.FLAG_NO_CLEAR;//notification图标永远存在
+     notification.vibrate=new long[]{1000,200,1000};
+     
+     
+     
+     //3define the  notification's manager and RendingIntent//pendingIntnet延期的意图
+     Intent intent=new Intent(this,MainActivity.class);
+     PendingIntent contentIntent=PendingIntent.getActivity(this, 0, intent , 0);
+     notification.setLatestEventInfo(this, "notife 标题", "notification 正文",contentIntent);
+     //pass the Notification to  the notificatiion 
+     manager.notify(0, notification);
+     */
+    mBuilder=new NotificationCompat.Builder(context);
+    mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    mBuilder.setContentTitle("快聊");
+    mBuilder.setContentText(message.getMessage());
+    mBuilder.setContentIntent(getDefaultIntent(context,message));
+    mBuilder.setTicker("新消息");
+    mBuilder.setWhen(System.currentTimeMillis());
+    mBuilder.setDefaults(Notification.DEFAULT_SOUND);
+    mBuilder.setAutoCancel(true);
+    mBuilder.setOnlyAlertOnce(true);
+    Notification notification=mBuilder.build();
+    notification.flags=Notification.FLAG_NO_CLEAR;
+    notification.icon=R.drawable.icon;
+    mNotificationManager.notify(R.drawable.icon,notification);
+  }
+  
+  private PendingIntent getDefaultIntent(Context context,IMMessage msg)
+  {
+    Intent intent=new Intent(context.getApplicationContext(),ChatActivity.class);
+    intent.putExtra("user", new User(msg.getUserid(),msg.getChannelid(),msg.getNick()));
+    intent.putExtra("msg", msg);
+    PendingIntent pintent=PendingIntent.getActivity(context, 1,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+    return pintent;
+    
   }
 }

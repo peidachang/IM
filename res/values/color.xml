@@ -6,11 +6,18 @@
     <color name="holo_blue">#FF33E5B5</color>
     <color name="black">@color/color_hei</color>
     <color name="color_hei">#ff000000</color>
-    <drawable name="face_item_selector_pressed">#DDDDDD</drawable>
     <color name="chat_time">@color/white</color>
     <color name="thirty_transparent_black">#4d000000</color>
     <color name="color_hei_8">#00000000</color>
     <color name="semi_transparent_w">#7fffffff</color>
+    <color name="menu_back">#3C3C3C</color>
+    <color name="menu_head_txt_color">#EEEEEE</color>
     
+     <color name="menu_item_txt_color">#E6E6E6</color>
+     <color name="menu_divider_color">#9ADC8A</color>
+     <color name="menu_item_head_press">#777777</color>
+    
+    <item type="drawable" name="face_item_selector_pressed">#DDDDDD</item>
     <item type="drawable" name="actionbar_back">#777777</item>
+    <item type="drawable" name="menu_item_press">#E6E4E7</item>
 </resources>

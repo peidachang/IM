@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.yzy.im.R;
 import com.yzy.im.bean.MessageItem;
+import com.yzy.im.util.TimeUtils;
 
 public class MessageAdapter extends BaseAdapter
 {
@@ -69,7 +70,7 @@ public class MessageAdapter extends BaseAdapter
     
     holder.imgHead.setImageResource(item.getHeadImg());
     holder.tvMsg.setText(item.getMessage());
-    holder.tvTime.setText(item.getTime_samp()+"");
+    holder.tvTime.setText(TimeUtils.convert(item.getTime_samp()));
     
     return convertView;
   }
