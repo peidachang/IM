@@ -76,6 +76,7 @@ public class IMApplication extends FrontiaApplication
   public void onCreate()
   {
     super.onCreate();
+    CrashHandler.getInstance().init(this);
     _instance=this;
     initFaceMap();
   }

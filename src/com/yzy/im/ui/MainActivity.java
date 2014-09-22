@@ -71,7 +71,8 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
     mChilds.get(0).add(user);
     xListView.setAdapter(adapter);
     addLeft();
-    
+    String tmp=null;
+    tmp.length();
   }
   
   public void initView()
