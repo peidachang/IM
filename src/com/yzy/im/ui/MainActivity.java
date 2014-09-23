@@ -60,6 +60,7 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    this.setSlidingActionBarEnabled(true);
     initView();
     //添加测试数据
     addGroupData();
@@ -71,8 +72,6 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
     mChilds.get(0).add(user);
     xListView.setAdapter(adapter);
     addLeft();
-    String tmp=null;
-    tmp.length();
   }
   
   public void initView()
@@ -157,17 +156,18 @@ public class MainActivity extends BaseSlidingFragmentActivity implements IEventC
     .replace("LEFT".hashCode(), new MenuFragment())
     .commit();
     
-    SlidingMenu sm = getSlidingMenu();
-    sm.setMode(SlidingMenu.LEFT);
-    sm.setShadowDrawable(R.drawable.shadow);
-    sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+    mSlidingMenu = getSlidingMenu();
+    mSlidingMenu.setMode(SlidingMenu.LEFT);
+    mSlidingMenu.setShadowDrawable(R.drawable.shadow);
+    mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
    
     int screenWidth=CommonUtil.getScreenWidth(this);
-    sm.setFadeEnabled(true);
-    sm.setFadeDegree(0.35f);
-    sm.setShadowWidth(screenWidth/40);
-    sm.setBehindWidth((int)(screenWidth*0.5));
-    sm.setBehindScrollScale(0.3333f);
+    mSlidingMenu.setFadeEnabled(true);
+    mSlidingMenu.setFadeDegree(0.35f);
+    mSlidingMenu.setShadowWidth(screenWidth/40);
+    mSlidingMenu.setBehindWidth((int)(screenWidth*0.5));
+    mSlidingMenu.setBehindScrollScale(0.3333f);
+    
     
   }
   

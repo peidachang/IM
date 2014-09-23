@@ -42,6 +42,7 @@ public class CrashHandler implements UncaughtExceptionHandler
   public void init(Context mContext)
   {
     this.mContext=mContext;
+    
     mDefaultHandler=Thread.getDefaultUncaughtExceptionHandler();
     Thread.setDefaultUncaughtExceptionHandler(this);
   }
@@ -49,10 +50,22 @@ public class CrashHandler implements UncaughtExceptionHandler
   @Override
   public void uncaughtException(Thread thread, Throwable ex)
   {
-    if(!handleException(ex) && mDefaultHandler!=null)
+    if (!handleException(ex) && mDefaultHandler != null) 
     {
       mDefaultHandler.uncaughtException(thread, ex);
+    }else
+    {
+      try {  
+        Thread.sleep(3000);  
+    } catch (InterruptedException e) {  
+        e.printStackTrace();
+    }  
+    //退出程序  
+    IMApplication.getInstance().finishActivity();
+    android.os.Process.killProcess(android.os.Process.myPid());  
+    System.exit(1);  
     }
+
   }
   
   public boolean handleException(Throwable ex)
@@ -82,6 +95,10 @@ public class CrashHandler implements UncaughtExceptionHandler
           // TODO Auto-generated catch block
           e.printStackTrace();
         }
+        
+        Looper.prepare();
+        ToastUtils.AlertMessageInCenter("程序即将崩溃,我已经将崩溃信息发至我的邮箱,便于尽快解决该崩溃！");
+        Looper.loop();
       };
     }.start();
     return true;

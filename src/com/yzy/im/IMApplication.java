@@ -72,6 +72,14 @@ public class IMApplication extends FrontiaApplication
     stacks.remove(activity);
   }
   
+  public void finishActivity()
+  {
+    for(Activity acitivity:stacks)
+    {
+      acitivity.finish();
+    }
+  }
+  
   @Override
   public void onCreate()
   {
