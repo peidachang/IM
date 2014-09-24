@@ -255,7 +255,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener,onKeyB
   @Override
   public void onItemClick(AdapterView<?> parent, View view, int position, long id)
   {
-    //这段代码的逻辑来自way
+    //这段代码的逻辑来自way，直接拿来主义
     if((Integer)view.getTag()==PerPageAdapter.ITEM_DEL)
     {
       //点击删除

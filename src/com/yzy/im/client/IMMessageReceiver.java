@@ -1,17 +1,17 @@
 package com.yzy.im.client;
 
 import java.lang.annotation.Annotation;
-
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 import android.widget.RemoteViews.RemoteView;
-
 import com.baidu.android.pushservice.PushConstants;
 import com.google.gson.Gson;
 import com.yzy.im.IMApplication;
@@ -24,6 +24,7 @@ import com.yzy.im.ui.ChatActivity;
 import com.yzy.im.util.LogUtil;
 import com.yzy.im.util.SharePreferenceHelper;
 
+@SuppressLint("NewApi")
 public class IMMessageReceiver extends BroadcastReceiver
 {
   private static final String TAG = "IMMessageReceiver";
@@ -94,27 +95,6 @@ public class IMMessageReceiver extends BroadcastReceiver
   
   private void showNotificationMessage(Context context,IMMessage message)
   {
-    /**
-     * //1得到一个notificationManager
-    //得到一个notification的服务
-     NotificationManager manager=(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-     //2Instantiate  the Notification
-     Notification  notification=new Notification(R.drawable.ic_launcher, "tickerText", System.currentTimeMillis());
-     
-     notification.sound=Uri.fromFile(new File("/sdcard/haha.mp3"));//指定声音
-     notification.flags=Notification.FLAG_AUTO_CANCEL;//notification显示完自动清空
-     notification.flags=Notification.FLAG_NO_CLEAR;//notification图标永远存在
-     notification.vibrate=new long[]{1000,200,1000};
-     
-     
-     
-     //3define the  notification's manager and RendingIntent//pendingIntnet延期的意图
-     Intent intent=new Intent(this,MainActivity.class);
-     PendingIntent contentIntent=PendingIntent.getActivity(this, 0, intent , 0);
-     notification.setLatestEventInfo(this, "notife 标题", "notification 正文",contentIntent);
-     //pass the Notification to  the notificatiion 
-     manager.notify(0, notification);
-     */
     mBuilder=new NotificationCompat.Builder(context);
     mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     mBuilder.setContentTitle("快聊");
@@ -125,9 +105,9 @@ public class IMMessageReceiver extends BroadcastReceiver
     mBuilder.setDefaults(Notification.DEFAULT_SOUND);
     mBuilder.setAutoCancel(true);
     mBuilder.setOnlyAlertOnce(true);
+    mBuilder.setSmallIcon(R.drawable.icon);
     Notification notification=mBuilder.build();
-    notification.flags=Notification.FLAG_NO_CLEAR;
-    notification.icon=R.drawable.icon;
+    notification.flags|=Notification.FLAG_NO_CLEAR;
     mNotificationManager.notify(R.drawable.icon,notification);
   }
   

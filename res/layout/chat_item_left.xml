@@ -54,6 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:textColor="@color/color_hei"
+            android:gravity="center_vertical"
             android:textSize="16.0sp" />
 
         <ProgressBar
