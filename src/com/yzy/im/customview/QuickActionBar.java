@@ -18,8 +18,6 @@ package com.yzy.im.customview;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import com.yzy.im.R;
-
 import android.content.Context;
 import android.graphics.Rect;
 import android.view.LayoutInflater;
@@ -34,6 +32,8 @@ import android.view.animation.Interpolator;
 import android.widget.HorizontalScrollView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.yzy.im.R;
 
 
 /**

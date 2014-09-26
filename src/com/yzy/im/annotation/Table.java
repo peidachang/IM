@@ -4,8 +4,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import android.webkit.WebSettings.RenderPriority;
 /**
  * ����ݿ��еı��ĳһ�����j��4
  * com.universal.framwork.annotation.Table

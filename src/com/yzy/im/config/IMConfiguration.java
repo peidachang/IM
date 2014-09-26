@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.security.AccessControlException;
 import java.util.Properties;
 
-
 import android.text.TextUtils;
 
 public class IMConfiguration

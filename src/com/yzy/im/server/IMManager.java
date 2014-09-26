@@ -4,20 +4,11 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Map;
 
 import com.yzy.im.util.CommonUtil;
 import com.yzy.im.util.LogUtil;
-import com.yzy.im.util.MD5Util;
-
-import android.text.TextUtils;
-import android.util.Log;
 
 public class IMManager implements IConstants
 {

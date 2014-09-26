@@ -5,8 +5,6 @@ import java.lang.reflect.Method;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import com.yzy.im.util.LogUtil;
-
 public class EventListener implements OnClickListener
 {
   private static final String TAG = "EventListener";

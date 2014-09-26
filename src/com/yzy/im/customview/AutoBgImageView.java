@@ -1,15 +1,14 @@
 package com.yzy.im.customview;
 
-import com.yzy.im.R;
-
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+
+import com.yzy.im.R;
 
 public class AutoBgImageView extends ImageView
 {

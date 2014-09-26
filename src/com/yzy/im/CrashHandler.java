@@ -5,17 +5,13 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Looper;
-import android.view.WindowManager;
 
 import com.yzy.im.bug.sender.EmailSender;
+import com.yzy.im.util.LogUtil;
 import com.yzy.im.util.ToastUtils;
 
 public class CrashHandler implements UncaughtExceptionHandler
@@ -74,6 +70,7 @@ public class CrashHandler implements UncaughtExceptionHandler
       return false;
     
     final String report=getCrashReport(mContext, ex);
+    LogUtil.getLogger().e(report);
     new Thread()
     {
       public void run() 

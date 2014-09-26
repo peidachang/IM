@@ -1,12 +1,11 @@
 package com.yzy.im.slidemenu;
 
-import com.yzy.im.ui.BaseActivity;
-
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+
+import com.yzy.im.ui.BaseActivity;
 
 
 

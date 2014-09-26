@@ -6,11 +6,8 @@ import java.util.LinkedHashMap;
 
 import android.app.Activity;
 
-import com.baidu.android.pushservice.PushConstants;
-import com.baidu.android.pushservice.PushManager;
 import com.baidu.frontia.FrontiaApplication;
 import com.yzy.im.callback.IEventCallback;
-import com.yzy.im.server.IConstants;
 import com.yzy.im.ui.BaseActivity;
 import com.yzy.im.util.SharePreferenceHelper;
 

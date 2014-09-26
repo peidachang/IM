@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.MenuItem;
@@ -39,6 +40,7 @@ public class MainActivity extends BaseSlidingFragmentActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    //设置ActionBar是否随着aboveView滑动
     this.setSlidingActionBarEnabled(true);
     replaceRight(new UserListFragment());
     addLeft();
@@ -96,5 +98,14 @@ public class MainActivity extends BaseSlidingFragmentActivity
       toggle();
     }
     return super.onOptionsItemSelected(item);
+  }
+  
+  public void replaceContentById(int id)
+  {
+    showContent();
+    if(id==R.id.item_for_personinfo)
+    {
+      replaceRight(new UserInofFragment());
+    }
   }
 }

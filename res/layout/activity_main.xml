@@ -3,20 +3,4 @@
     android:layout_height="match_parent"
     android:id="@+id/frame_contenet"
      >
-    
-	<!--  
-    <include layout="@layout/search_box" />
-
-  
-    <com.yzy.im.customview.IphoneTreeView
-        android:id="@+id/friend_xlistview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:cacheColorHint="@android:color/transparent"
-        android:divider="@null"
-        android:transcriptMode="normal" >
-     </com.yzy.im.customview.IphoneTreeView>
-     
-     -->
 </FrameLayout>

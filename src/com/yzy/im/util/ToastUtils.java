@@ -1,9 +1,9 @@
 package com.yzy.im.util;
 
-import com.yzy.im.IMApplication;
-
 import android.view.Gravity;
 import android.widget.Toast;
+
+import com.yzy.im.IMApplication;
 
 public class ToastUtils {
 

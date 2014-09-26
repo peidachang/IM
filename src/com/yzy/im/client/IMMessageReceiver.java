@@ -1,6 +1,5 @@
 package com.yzy.im.client;
 
-import java.lang.annotation.Annotation;
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -8,10 +7,8 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
-import android.widget.RemoteViews;
-import android.widget.RemoteViews.RemoteView;
+
 import com.baidu.android.pushservice.PushConstants;
 import com.google.gson.Gson;
 import com.yzy.im.IMApplication;
