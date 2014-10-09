@@ -41,7 +41,8 @@
        <activity android:name="com.yzy.im.ui.MainActivity" ></activity>
        <activity android:name="com.yzy.im.ui.LoginActivity"></activity>
        <activity android:name="com.yzy.im.ui.ChatActivity"></activity>
-       <activity android:name="com.yzy.im.ui.CaptureActivity">
+       <activity android:name="com.yzy.im.ui.CaptureActivity"
+           >
             
        </activity>
         <activity android:name="com.yzy.im.ui.ResultActivity"></activity>

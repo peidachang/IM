@@ -9,12 +9,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.PopupWindow.OnDismissListener;
@@ -36,7 +42,7 @@ import com.yzy.im.server.IConstants;
 import com.yzy.im.util.CommonUtil;
 import com.yzy.im.util.SharePreferenceHelper;
 
-public class UserListFragment extends Fragment implements IEventCallback,OnDismissListener
+public class UserListFragment extends Fragment implements IEventCallback,OnDismissListener,OnClickListener
 {
   private static final String TAG = "UserListFragment";
   
@@ -45,12 +51,15 @@ public class UserListFragment extends Fragment implements IEventCallback,OnDismi
   private IphoneTreeView xListView;
   private TreeViewAdapter adapter;
   private QuickActionWidget mQuickAction;
+  private Button btnAddFriend;
   
   
   @Override
   public void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
+    //在Fragment里面加入ActionItem，必须加入这一句
+    setHasOptionsMenu(true);
     IMApplication.getInstance().addEventCallback(this);
   }
   
@@ -219,5 +228,27 @@ public class UserListFragment extends Fragment implements IEventCallback,OnDismi
   {
     IMApplication.getInstance().removeEventCallback(this);
     super.onDestroy();
+  }
+  
+  @Override
+  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+  {
+    inflater.inflate(R.menu.user_list, menu);  
+    MenuItem item=menu.findItem(R.id.action_add_friend);
+    btnAddFriend=(Button)MenuItemCompat.getActionView(item).findViewById(R.id.action_right);
+    btnAddFriend.setText(R.string.scan_scan);
+    btnAddFriend.setOnClickListener(this);
+    btnAddFriend.setBackgroundResource(R.drawable.login_button_bg);
+    super.onCreateOptionsMenu(menu, inflater);  
+  }
+
+  @Override
+  public void onClick(View v)
+  {
+    if(v==btnAddFriend)
+    {
+      Intent intent=new Intent(this.getActivity(),CaptureActivity.class);
+      this.startActivity(intent);
+    }
   }
 }

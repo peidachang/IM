@@ -29,7 +29,7 @@
         android:layout_height="fill_parent" />
 
     <!-- 顶部条栏 -->
-
+	<!-- 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -58,9 +58,9 @@
             android:textColor="@android:color/white"
             android:textSize="18sp" />
     </RelativeLayout>
-
+	 -->
     <!-- 底部菜单 -->
-
+	<!-- 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -134,8 +134,9 @@
                 android:textColor="@android:color/white" />
         </LinearLayout>
     </LinearLayout>
+     -->
     <!-- 扫描结果窗口 -->
-
+	<!--  
     <LinearLayout
         android:id="@+id/result_view"
         android:layout_width="fill_parent"
@@ -286,9 +287,9 @@
             </ScrollView>
         </LinearLayout>
     </LinearLayout>
-
+	-->
     <!-- 状态窗口 -->
-
+	<!-- 
     <TextView
         android:id="@+id/status_view"
         android:layout_width="wrap_content"
@@ -297,5 +298,5 @@
         android:layout_marginBottom="150dp"
         android:background="@color/transparent"
         android:textColor="@color/status_text" />
-
+ -->
 </merge>

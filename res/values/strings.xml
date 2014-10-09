@@ -27,7 +27,6 @@
     
      <string name="send_shake">抖动</string>
      <string name="register">注册</string>
-     
     <string name="scan_qrcode">将二维码放入框内，即可自动扫描</string>
     <string name="scan_onecode">将条形码放入框内，即可自动扫描</string>
     <string name="scan_qr">二维码</string>

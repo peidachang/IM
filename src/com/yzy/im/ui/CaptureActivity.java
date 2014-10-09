@@ -8,7 +8,6 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Vector;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,8 +18,9 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -35,18 +35,18 @@ import com.google.zxing.Result;
 import com.google.zxing.ResultMetadataType;
 import com.google.zxing.ResultPoint;
 import com.yzy.im.R;
-import com.yzy.im.zxing.camera.BeepManager;
-import com.yzy.im.zxing.camera.CameraManager;
 import com.yzy.im.zxing.decode.CaptureActivityHandler;
 import com.yzy.im.zxing.decode.DecodeThread;
 import com.yzy.im.zxing.decode.FinishListener;
 import com.yzy.im.zxing.decode.InactivityTimer;
 import com.yzy.im.zxing.view.ViewfinderView;
+import com.yzy.im.zxxing.camera.BeepManager;
+import com.yzy.im.zxxing.camera.CameraManager;
 
 /**
  * 条码二维码扫描功能实现
  */
-public class CaptureActivity extends Activity implements SurfaceHolder.Callback {
+public class CaptureActivity extends ActionBarActivity implements SurfaceHolder.Callback {
 	private static final String TAG = CaptureActivity.class.getSimpleName();
 
 	private boolean hasSurface;
@@ -58,12 +58,12 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	private ViewfinderView viewfinderView;
 	private SurfaceView surfaceView;
 	private SurfaceHolder surfaceHolder;
-	private TextView statusView;
-	private TextView scanTextView;
-	private View resultView;
-	private ImageView onecode;
-	private ImageView qrcode;
-	private Button mBtnBack;
+	//private TextView statusView;
+	//private TextView scanTextView;
+	//private View resultView;
+//	private ImageView onecode;
+//	private ImageView qrcode;
+//	private Button mBtnBack;
 
 	/**
 	 * 活动监控器，用于省电，如果手机没有连接电源线，那么当相机开启后如果一直处于不被使用状态则该服务会将当前activity关闭。
@@ -97,8 +97,9 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 		Window window = getWindow();
 		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // 保持屏幕处于点亮状态
 		// window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); // 全屏
-		requestWindowFeature(Window.FEATURE_NO_TITLE); // 隐藏标题栏
+		//requestWindowFeature(Window.FEATURE_NO_TITLE); // 隐藏标题栏
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); // 竖屏
+		this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	/**
@@ -121,13 +122,13 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	private void initView() {
 
 		surfaceView = (SurfaceView) findViewById(R.id.preview_view);
-		resultView = findViewById(R.id.result_view);
-		scanTextView = (TextView) findViewById(R.id.mtextview_title);
-		statusView = (TextView) findViewById(R.id.status_view);
-		onecode = (ImageView) findViewById(R.id.onecode_id);
-		qrcode = (ImageView) findViewById(R.id.qrcode_id);
-		qrcode.setBackgroundResource(R.drawable.scan_qr_hl);
-		mBtnBack=(Button)findViewById(R.id.mbutton_back);
+//		resultView = findViewById(R.id.result_view);
+//		scanTextView = (TextView) findViewById(R.id.mtextview_title);
+//		statusView = (TextView) findViewById(R.id.status_view);
+//		onecode = (ImageView) findViewById(R.id.onecode_id);
+//		qrcode = (ImageView) findViewById(R.id.qrcode_id);
+//		qrcode.setBackgroundResource(R.drawable.scan_qr_hl);
+//		mBtnBack=(Button)findViewById(R.id.mbutton_back);
 
 	}
 
@@ -135,10 +136,10 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	 * 初始化点击切换扫描类型事件
 	 */
 	private void initEvent() {
-		onecode.setOnClickListener(this.onecodeImageListener);
-		qrcode.setOnClickListener(this.qrcodeImageListener);
-		mBtnBack.setOnClickListener(this.backClickListener);
-		qrcode.setSelected(true);
+//		onecode.setOnClickListener(this.onecodeImageListener);
+//		qrcode.setOnClickListener(this.qrcodeImageListener);
+//		mBtnBack.setOnClickListener(this.backClickListener);
+//		qrcode.setSelected(true);
 	}
 
 	/**
@@ -148,26 +149,26 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 		do {
 			if ((CaptureActivity.currentState != null)
 					&& (CaptureActivity.currentState.equals("onecode"))) {
-				qrcode.setBackgroundResource(R.drawable.scan_qr);
-				onecode.setBackgroundResource(R.drawable.scan_store_hl);
-				qrcode.setSelected(false);
-				onecode.setSelected(true);
+//				qrcode.setBackgroundResource(R.drawable.scan_qr);
+//				onecode.setBackgroundResource(R.drawable.scan_store_hl);
+//				qrcode.setSelected(false);
+//				onecode.setSelected(true);
 				viewfinderView.setVisibility(View.VISIBLE);
 				onecodeSetting();
-				statusView.setText(R.string.scan_onecode);
+				//statusView.setText(R.string.scan_onecode);
 				return;
 			}
 		}
 
 		while ((CaptureActivity.currentState == null)
 				|| (!CaptureActivity.currentState.equals("qrcode")));
-		onecode.setBackgroundResource(R.drawable.scan_store);
-		qrcode.setBackgroundResource(R.drawable.scan_qr_hl);
-		qrcode.setSelected(true);
-		onecode.setSelected(false);
+//		onecode.setBackgroundResource(R.drawable.scan_store);
+//		qrcode.setBackgroundResource(R.drawable.scan_qr_hl);
+//		qrcode.setSelected(true);
+//		onecode.setSelected(false);
 		viewfinderView.setVisibility(View.VISIBLE);
 		qrcodeSetting();
-		statusView.setText(R.string.scan_qrcode);
+		//statusView.setText(R.string.scan_qrcode);
 	}
 
 	/**
@@ -198,8 +199,8 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	 * 展示状态视图和扫描窗口，隐藏结果视图
 	 */
 	private void resetStatusView() {
-		resultView.setVisibility(View.GONE);
-		statusView.setVisibility(View.GONE);
+//		resultView.setVisibility(View.GONE);
+//		statusView.setVisibility(View.GONE);
 		viewfinderView.setVisibility(View.VISIBLE);
 	}
 
@@ -463,11 +464,11 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	private View.OnClickListener onecodeImageListener = new View.OnClickListener() {
 		public void onClick(View paramAnonymousView) {
 
-			qrcode.setBackgroundResource(R.drawable.scan_qr);
-			onecode.setBackgroundResource(R.drawable.scan_store_hl);
-			qrcode.setSelected(false);
-			onecode.setSelected(true);
-			statusView.setText(R.string.scan_onecode);
+//			qrcode.setBackgroundResource(R.drawable.scan_qr);
+//			onecode.setBackgroundResource(R.drawable.scan_store_hl);
+//			qrcode.setSelected(false);
+//			onecode.setSelected(true);
+//			statusView.setText(R.string.scan_onecode);
 			viewfinderView.setVisibility(View.VISIBLE);
 			currentState = "onecode";
 			onecodeSetting();
@@ -489,7 +490,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 		decodeFormats = new Vector<BarcodeFormat>(7);
 		decodeFormats.clear();
 		decodeFormats.addAll(DecodeThread.ONE_D_FORMATS);
-		scanTextView.setText(R.string.scan_one);
+		//scanTextView.setText(R.string.scan_one);
 		if (null != mHandler) {
 			mHandler.setDecodeFormats(decodeFormats);
 		}
@@ -506,11 +507,11 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	private View.OnClickListener qrcodeImageListener = new View.OnClickListener() {
 		public void onClick(View paramAnonymousView) {
 
-			onecode.setBackgroundResource(R.drawable.scan_store);
-			qrcode.setBackgroundResource(R.drawable.scan_qr_hl);
-			qrcode.setSelected(true);
-			onecode.setSelected(false);
-			statusView.setText(R.string.scan_qrcode);
+//			onecode.setBackgroundResource(R.drawable.scan_store);
+//			qrcode.setBackgroundResource(R.drawable.scan_qr_hl);
+//			qrcode.setSelected(true);
+//			onecode.setSelected(false);
+//			statusView.setText(R.string.scan_qrcode);
 			viewfinderView.setVisibility(View.VISIBLE);
 			currentState = "qrcode";
 			qrcodeSetting();
@@ -523,7 +524,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 		decodeFormats.clear();
 		decodeFormats.add(BarcodeFormat.QR_CODE);
 		decodeFormats.add(BarcodeFormat.DATA_MATRIX);
-		scanTextView.setText(R.string.scan_qr);
+		//scanTextView.setText(R.string.scan_qr);
 		if (null != mHandler) {
 			mHandler.setDecodeFormats(decodeFormats);
 		}
@@ -582,15 +583,19 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 		}
 		resetStatusView();
 	}
-
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		switch (keyCode) {
-		case KeyEvent.KEYCODE_BACK: // 拦截返回键
-
-			restartPreviewAfterDelay(0L);
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+	  switch(item.getItemId())
+	  {
+	    case android.R.id.home:
+	      finish();
+	      return true;
+	  }
+	  return super.onOptionsItemSelected(item);
 	}
+
+
 
 }

@@ -37,8 +37,8 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.yzy.im.R;
 import com.yzy.im.ui.CaptureActivity;
-import com.yzy.im.zxing.camera.CameraManager;
 import com.yzy.im.zxing.view.ViewfinderResultPointCallback;
+import com.yzy.im.zxxing.camera.CameraManager;
 
 /**
  * This class handles all the messaging which comprises the state machine for

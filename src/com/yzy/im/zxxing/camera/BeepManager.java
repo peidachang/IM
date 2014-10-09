@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yzy.im.zxing.camera;
+package com.yzy.im.zxxing.camera;
 
 import java.io.IOException;
 
@@ -29,6 +29,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.yzy.im.R;
+import com.yzy.im.ui.CaptureActivity;
 
 /**
  * Manages beeps and vibrations for {@link CaptureActivity}.

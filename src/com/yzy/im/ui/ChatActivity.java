@@ -435,7 +435,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener,onKeyB
   @Override
   public boolean onCreateOptionsMenu(Menu menu)
   {
-    getMenuInflater().inflate(R.menu.main, menu);
+    getMenuInflater().inflate(R.menu.chat, menu);
     MenuItem item= menu.findItem(R.id.action_shake);
     //在2.x版本中通过这种方式
     btnShake=(Button) MenuItemCompat.getActionView(item).findViewById(R.id.action_right);

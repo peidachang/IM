@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yzy.im.zxing.camera;
+package com.yzy.im.zxxing.camera;
 
 import android.hardware.Camera;
 import android.util.Log;

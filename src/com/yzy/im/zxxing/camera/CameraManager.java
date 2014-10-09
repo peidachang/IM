@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.yzy.im.zxing.camera;
+package com.yzy.im.zxxing.camera;
 
 import java.io.IOException;
-import android.annotation.SuppressLint;
+
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -25,6 +25,7 @@ import android.hardware.Camera;
 import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceHolder;
+
 import com.google.zxing.PlanarYUVLuminanceSource;
 
 /**
@@ -37,7 +38,6 @@ import com.google.zxing.PlanarYUVLuminanceSource;
  * 
  * @author dswitkin@google.com (Daniel Switkin)
  */
-@SuppressLint("NewApi")
 public final class CameraManager {
 
 	private static final String TAG = CameraManager.class.getSimpleName();
