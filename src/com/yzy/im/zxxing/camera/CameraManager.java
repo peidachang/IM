@@ -23,10 +23,12 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.google.zxing.PlanarYUVLuminanceSource;
+import com.yzy.im.util.LogUtil;
 
 /**
  * This object wraps the Camera service object and expects to be the only one
@@ -65,6 +67,9 @@ public final class CameraManager {
 	private int requestedFramingRectWidth;
 
 	private int requestedFramingRectHeight;
+	
+	//根据亮度控制灯光
+	private AmbientLightManager ambientManager;
 
 	/**
 	 * Preview frames are delivered here, which we pass on to the registered
@@ -77,6 +82,7 @@ public final class CameraManager {
 		this.context = context;
 		this.configManager = new CameraConfigurationManager(context);
 		previewCallback = new PreviewCallback(configManager);
+		ambientManager=new AmbientLightManager(context);
 	}
 
 	/**
@@ -142,6 +148,7 @@ public final class CameraManager {
 			}
 		}
 
+		ambientManager.start(this);
 	}
 
 	/**
@@ -187,6 +194,7 @@ public final class CameraManager {
 	 */
 	public synchronized void closeDriver() {
 		if (camera != null) {
+		  ambientManager.stop();
 			camera.release();
 			camera = null;
 			// Make sure to clear these each time we close the camera, so that
@@ -295,17 +303,22 @@ public final class CameraManager {
 					MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
 			// 将扫描框设置成一个正方形
 			int height = width;
+			
 
 			int leftOffset = (screenResolution.x - width) / 2;
 			int topOffset = (screenResolution.y - height) / 2;
 			framingRect = new Rect(leftOffset, topOffset - 80, leftOffset
 					+ width, topOffset - 80 + height);
+			
 
 			Log.d(TAG, "Calculated framing rect: " + framingRect);
 		}
 
 		return framingRect;
 	}
+	
+	
+
 
 	/**
 	 * Target 5/8 of each dimension<br/>
@@ -318,13 +331,14 @@ public final class CameraManager {
 	 */
 	private static int findDesiredDimensionInRange(int resolution, int hardMin,
 			int hardMax) {
-		int dim = 5 * resolution / 8; // Target 5/8 of each dimension
+		int dim = 3 * resolution / 4; // Target 5/8 of each dimension
 		if (dim < hardMin) {
 			return hardMin;
 		}
 		if (dim > hardMax) {
 			return hardMax;
 		}
+		LogUtil.getLogger().d("dim--->"+dim);
 		return dim;
 	}
 
@@ -380,11 +394,10 @@ public final class CameraManager {
 			}
 			int leftOffset = (screenResolution.x - width) / 2;
 			int topOffset = (screenResolution.y - height) / 2;
-			// framingRect = new Rect(leftOffset, topOffset, leftOffset + width,
-			// topOffset + height);
-			framingRect = new Rect(leftOffset, topOffset - 80, leftOffset
-					+ width, topOffset - 80 + height);
-			Log.d(TAG, "Calculated manual framing rect: " + framingRect);
+			framingRect = new Rect(leftOffset, topOffset, leftOffset + width,
+			 topOffset + height);
+//			framingRect = new Rect(leftOffset, topOffset - 80, leftOffset
+//					+ width, topOffset - 80 + height);
 			framingRectInPreview = null;
 		} else {
 			requestedFramingRectWidth = width;

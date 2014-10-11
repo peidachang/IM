@@ -64,12 +64,17 @@ public final class ViewfinderView extends View {
 	/**
 	 * 四个绿色边角对应的宽度
 	 */
-	private static final int CORNER_WIDTH = 6;
+	private static final int CORNER_WIDTH = 9;
 	private static final int L_WIDTH = 1;
 	/**
 	 * 扫描框中的中间线的宽度
 	 */
-	private static final int MIDDLE_LINE_WIDTH = 15;
+	private static final int MIDDLE_LINE_WIDTH = 4;
+	
+	/** 
+   * 扫描框中的中间线的与扫描框左右的间隙 
+   */  
+  private static final int MIDDLE_LINE_PADDING = 5;  
 
 	/**
 	 * 中间那条线每次刷新移动的距离
@@ -84,6 +89,11 @@ public final class ViewfinderView extends View {
 	 * 画笔对象的引用
 	 */
 	private Paint paint;
+	
+	/**
+   * 字体距离扫描框下面的距离
+   */
+  private static final int TEXT_PADDING_TOP = 30;
 
 	/**
 	 * 中间滑动线的最顶端位置
@@ -106,7 +116,7 @@ public final class ViewfinderView extends View {
 		// time in onDraw().
 		density = context.getResources().getDisplayMetrics().density;
 		// 将像素转换成dp
-		ScreenRate = (int) (20 * density);
+		ScreenRate = (int) (30 * density);
 		paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		Resources resources = getResources();
 		maskColor = resources.getColor(R.color.viewfinder_mask);
@@ -198,28 +208,34 @@ public final class ViewfinderView extends View {
 			lineRect.right = frame.right;
 			lineRect.top = slideTop;
 			lineRect.bottom = slideTop + MIDDLE_LINE_WIDTH;// 扫描线的宽度15
-			canvas.drawBitmap(((BitmapDrawable) (getResources()
-					.getDrawable(R.drawable.qrcode_scan_line))).getBitmap(),
-					null, lineRect, paint);
+//			canvas.drawBitmap(((BitmapDrawable) (getResources()
+//					.getDrawable(R.drawable.qrcode_scan_line))).getBitmap(),
+//					null, lineRect, paint);
+			//中间线划出来，而没有使用图片
+			canvas.drawRect(frame.left + MIDDLE_LINE_PADDING, slideTop - MIDDLE_LINE_WIDTH/2, frame.right - MIDDLE_LINE_PADDING,slideTop + MIDDLE_LINE_WIDTH/2, paint);  
 			paint.setColor(Color.WHITE);
 			paint.setTextSize(15 * density);
 			paint.setAlpha(0xee);
 			paint.setTypeface(Typeface.create("System", Typeface.BOLD));
-			if ((CaptureActivity.currentState != null)
-					&& (CaptureActivity.currentState.equals("onecode"))) {
-				canvas.drawText(
-						getResources().getString(R.string.scan_onecode),
-						frame.left + 8, (float) (frame.bottom + (float) 40
-								* density), paint);
-
-			}
-			if ((CaptureActivity.currentState != null)
-					&& (CaptureActivity.currentState.equals("qrcode"))) {
-				canvas.drawText(getResources().getString(R.string.scan_qrcode),
-						frame.left - 20, (float) (frame.bottom + (float) 40
-								* density), paint);
-			}
-
+//			if ((CaptureActivity.currentState != null)
+//					&& (CaptureActivity.currentState.equals("onecode"))) {
+////				canvas.drawText(
+////						getResources().getString(R.string.scan_onecode),
+////						frame.left + 8, (float) (frame.bottom + (float) 40
+////								* density), paint);
+//				
+//				canvas.drawText(getResources().getString(R.string.scan_onecode), frame.left, (float) (frame.bottom + (float)TEXT_PADDING_TOP *density), paint);
+//
+//			}
+//			if ((CaptureActivity.currentState != null)
+//					&& (CaptureActivity.currentState.equals("qrcode"))) {
+////				canvas.drawText(getResources().getString(R.string.scan_qrcode),
+////						frame.left - 20, (float) (frame.bottom + (float) 40
+////								* density), paint);
+//			  
+//			  canvas.drawText(getResources().getString(R.string.scan_qrcode), frame.left, (float) (frame.bottom + (float)TEXT_PADDING_TOP *density), paint);
+//			}
+			canvas.drawText(getResources().getString(R.string.scan_qrcode), frame.left-12*density, (float) (frame.bottom + (float)TEXT_PADDING_TOP *density), paint);
 			List<ResultPoint> currentPossible = possibleResultPoints;
 			Collection<ResultPoint> currentLast = lastPossibleResultPoints;
 			if (currentPossible.isEmpty()) {
@@ -243,7 +259,8 @@ public final class ViewfinderView extends View {
 				}
 			}
 			// 刷新界面区域
-			postInvalidateDelayed(ANIMATION_DELAY, 0, 0, width, height);
+			//postInvalidateDelayed(ANIMATION_DELAY, 0, 0, width, height);
+			postInvalidateDelayed(ANIMATION_DELAY, frame.left, frame.top, frame.right, frame.bottom);
 		}
 	}
 

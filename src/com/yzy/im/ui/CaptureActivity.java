@@ -8,35 +8,31 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Vector;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.ResultMetadataType;
 import com.google.zxing.ResultPoint;
 import com.yzy.im.R;
+import com.yzy.im.customview.AutoBgImageView;
+import com.yzy.im.util.ToastUtils;
 import com.yzy.im.zxing.decode.CaptureActivityHandler;
-import com.yzy.im.zxing.decode.DecodeThread;
 import com.yzy.im.zxing.decode.FinishListener;
 import com.yzy.im.zxing.decode.InactivityTimer;
 import com.yzy.im.zxing.view.ViewfinderView;
@@ -46,24 +42,22 @@ import com.yzy.im.zxxing.camera.CameraManager;
 /**
  * 条码二维码扫描功能实现
  */
-public class CaptureActivity extends ActionBarActivity implements SurfaceHolder.Callback {
+public class CaptureActivity extends Activity implements SurfaceHolder.Callback,OnClickListener {
 	private static final String TAG = CaptureActivity.class.getSimpleName();
 
 	private boolean hasSurface;
 	private BeepManager beepManager;// 声音震动管理器。如果扫描成功后可以播放一段音频，也可以震动提醒，可以通过配置来决定扫描成功后的行为。
-	public SharedPreferences mSharedPreferences;// 存储二维码条形码选择的状态
+	//public SharedPreferences mSharedPreferences;// 存储二维码条形码选择的状态
 	public static String currentState;// 条形码二维码选择状态
 	private String characterSet;
 
 	private ViewfinderView viewfinderView;
 	private SurfaceView surfaceView;
 	private SurfaceHolder surfaceHolder;
-	//private TextView statusView;
-	//private TextView scanTextView;
-	//private View resultView;
-//	private ImageView onecode;
-//	private ImageView qrcode;
-//	private Button mBtnBack;
+	
+	private AutoBgImageView img_flashLight;
+	
+	private AutoBgImageView img_photo_lib;
 
 	/**
 	 * 活动监控器，用于省电，如果手机没有连接电源线，那么当相机开启后如果一直处于不被使用状态则该服务会将当前activity关闭。
@@ -96,10 +90,7 @@ public class CaptureActivity extends ActionBarActivity implements SurfaceHolder.
 	private void initSetting() {
 		Window window = getWindow();
 		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // 保持屏幕处于点亮状态
-		// window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); // 全屏
-		//requestWindowFeature(Window.FEATURE_NO_TITLE); // 隐藏标题栏
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); // 竖屏
-		this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	/**
@@ -109,10 +100,6 @@ public class CaptureActivity extends ActionBarActivity implements SurfaceHolder.
 		hasSurface = false;
 		inactivityTimer = new InactivityTimer(this);
 		beepManager = new BeepManager(this);
-		mSharedPreferences = PreferenceManager
-				.getDefaultSharedPreferences(this);
-		currentState = this.mSharedPreferences.getString("currentState",
-				"qrcode");
 		cameraManager = new CameraManager(getApplication());
 	}
 
@@ -120,56 +107,19 @@ public class CaptureActivity extends ActionBarActivity implements SurfaceHolder.
 	 * 初始化视图
 	 */
 	private void initView() {
-
 		surfaceView = (SurfaceView) findViewById(R.id.preview_view);
-//		resultView = findViewById(R.id.result_view);
-//		scanTextView = (TextView) findViewById(R.id.mtextview_title);
-//		statusView = (TextView) findViewById(R.id.status_view);
-//		onecode = (ImageView) findViewById(R.id.onecode_id);
-//		qrcode = (ImageView) findViewById(R.id.qrcode_id);
-//		qrcode.setBackgroundResource(R.drawable.scan_qr_hl);
-//		mBtnBack=(Button)findViewById(R.id.mbutton_back);
-
+		img_flashLight=(AutoBgImageView)findViewById(R.id.img_flash_light);
+		img_photo_lib=(AutoBgImageView)findViewById(R.id.img_photo_lib);
 	}
 
 	/**
 	 * 初始化点击切换扫描类型事件
 	 */
 	private void initEvent() {
-//		onecode.setOnClickListener(this.onecodeImageListener);
-//		qrcode.setOnClickListener(this.qrcodeImageListener);
-//		mBtnBack.setOnClickListener(this.backClickListener);
-//		qrcode.setSelected(true);
+	  img_flashLight.setOnClickListener(this);
+	  img_photo_lib.setOnClickListener(this);
 	}
 
-	/**
-	 * 初始设置扫描类型（最后一次使用类型）
-	 */
-	private void setScanType() {
-		do {
-			if ((CaptureActivity.currentState != null)
-					&& (CaptureActivity.currentState.equals("onecode"))) {
-//				qrcode.setBackgroundResource(R.drawable.scan_qr);
-//				onecode.setBackgroundResource(R.drawable.scan_store_hl);
-//				qrcode.setSelected(false);
-//				onecode.setSelected(true);
-				viewfinderView.setVisibility(View.VISIBLE);
-				onecodeSetting();
-				//statusView.setText(R.string.scan_onecode);
-				return;
-			}
-		}
-
-		while ((CaptureActivity.currentState == null)
-				|| (!CaptureActivity.currentState.equals("qrcode")));
-//		onecode.setBackgroundResource(R.drawable.scan_store);
-//		qrcode.setBackgroundResource(R.drawable.scan_qr_hl);
-//		qrcode.setSelected(true);
-//		onecode.setSelected(false);
-		viewfinderView.setVisibility(View.VISIBLE);
-		qrcodeSetting();
-		//statusView.setText(R.string.scan_qrcode);
-	}
 
 	/**
 	 * 主要对相机进行初始化工作
@@ -181,7 +131,7 @@ public class CaptureActivity extends ActionBarActivity implements SurfaceHolder.
 		viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
 		viewfinderView.setCameraManager(cameraManager);
 		surfaceHolder = surfaceView.getHolder();
-		setScanType();
+		qrcodeSetting();
 		resetStatusView();
 		if (hasSurface) {
 			initCamera(surfaceHolder);
@@ -199,8 +149,6 @@ public class CaptureActivity extends ActionBarActivity implements SurfaceHolder.
 	 * 展示状态视图和扫描窗口，隐藏结果视图
 	 */
 	private void resetStatusView() {
-//		resultView.setVisibility(View.GONE);
-//		statusView.setVisibility(View.GONE);
 		viewfinderView.setVisibility(View.VISIBLE);
 	}
 
@@ -283,18 +231,9 @@ public class CaptureActivity extends ActionBarActivity implements SurfaceHolder.
 	protected void onDestroy() {
 		// 停止活动监控器
 		inactivityTimer.shutdown();
-		saveScanTypeToSp();
 		super.onDestroy();
 	}
 
-	/**
-	 * 保存退出进程前选中的二维码条形码的状态
-	 */
-	private void saveScanTypeToSp() {
-		SharedPreferences.Editor localEditor = this.mSharedPreferences.edit();
-		localEditor.putString("currentState", CaptureActivity.currentState);
-		localEditor.commit();
-	}
 
 	/**
 	 * 获取扫描结果
@@ -398,139 +337,18 @@ public class CaptureActivity extends ActionBarActivity implements SurfaceHolder.
 		}
 	}
 
-	/**
-	 * 显示扫描结果
-	 * 
-	 * @param rawResult
-	 * @param barcode
-	 */
-//	@SuppressWarnings("unused")
-//	private void handleDecodeInternally(Result rawResult, Bitmap barcode) {
-//		statusView.setVisibility(View.GONE);
-//		viewfinderView.setVisibility(View.GONE);
-//		resultView.setVisibility(View.VISIBLE);
-//
-//		ImageView barcodeImageView = (ImageView) findViewById(R.id.barcode_image_view);
-//		if (barcode == null) {
-//			barcodeImageView.setImageBitmap(BitmapFactory.decodeResource(
-//					getResources(), R.drawable.ic_launcher));
-//		} else {
-//			barcodeImageView.setImageBitmap(barcode);
-//		}
-//
-//		TextView formatTextView = (TextView) findViewById(R.id.format_text_view);
-//		formatTextView.setText(rawResult.getBarcodeFormat().toString());
-//
-//		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.SHORT,
-//				DateFormat.SHORT);
-//		TextView timeTextView = (TextView) findViewById(R.id.time_text_view);
-//		timeTextView
-//				.setText(formatter.format(new Date(rawResult.getTimestamp())));
-//
-//		TextView metaTextView = (TextView) findViewById(R.id.meta_text_view);
-//		View metaTextViewLabel = findViewById(R.id.meta_text_view_label);
-//		metaTextView.setVisibility(View.GONE);
-//		metaTextViewLabel.setVisibility(View.GONE);
-//		Map<ResultMetadataType, Object> metadata = rawResult
-//				.getResultMetadata();
-//		if (metadata != null) {
-//			StringBuilder metadataText = new StringBuilder(20);
-//			for (Map.Entry<ResultMetadataType, Object> entry : metadata
-//					.entrySet()) {
-//				if (DISPLAYABLE_METADATA_TYPES.contains(entry.getKey())) {
-//					metadataText.append(entry.getValue()).append('\n');
-//				}
-//			}
-//			if (metadataText.length() > 0) {
-//				metadataText.setLength(metadataText.length() - 1);
-//				metaTextView.setText(metadataText);
-//				metaTextView.setVisibility(View.VISIBLE);
-//				metaTextViewLabel.setVisibility(View.VISIBLE);
-//			}
-//		}
-//
-//		TextView contentsTextView = (TextView) findViewById(R.id.contents_text_view);
-//
-//		// Crudely scale betweeen 22 and 32 -- bigger font for shorter text
-//		contentsTextView.setText(rawResult.getText());
-//		TextView supplementTextView = (TextView) findViewById(R.id.contents_supplement_text_view);
-//		supplementTextView.setText("");
-//		supplementTextView.setOnClickListener(null);
-//	}
-
-	/**
-	 * 点击响应条形码扫描
-	 */
-	private View.OnClickListener onecodeImageListener = new View.OnClickListener() {
-		public void onClick(View paramAnonymousView) {
-
-//			qrcode.setBackgroundResource(R.drawable.scan_qr);
-//			onecode.setBackgroundResource(R.drawable.scan_store_hl);
-//			qrcode.setSelected(false);
-//			onecode.setSelected(true);
-//			statusView.setText(R.string.scan_onecode);
-			viewfinderView.setVisibility(View.VISIBLE);
-			currentState = "onecode";
-			onecodeSetting();
-
-		}
-	};
-	
-	private View.OnClickListener backClickListener=new View.OnClickListener()
-  {
-    
-    @Override
-    public void onClick(View v)
-    {
-      CaptureActivity.this.finish();
-    }
-  };
-
-	private void onecodeSetting() {
-		decodeFormats = new Vector<BarcodeFormat>(7);
-		decodeFormats.clear();
-		decodeFormats.addAll(DecodeThread.ONE_D_FORMATS);
-		//scanTextView.setText(R.string.scan_one);
-		if (null != mHandler) {
-			mHandler.setDecodeFormats(decodeFormats);
-		}
-
-		viewfinderView.refreshDrawableState();
-		cameraManager.setManualFramingRect(360, 222);
-		viewfinderView.refreshDrawableState();
-
-	}
-
-	/**
-	 * 点击响应二维码扫描
-	 */
-	private View.OnClickListener qrcodeImageListener = new View.OnClickListener() {
-		public void onClick(View paramAnonymousView) {
-
-//			onecode.setBackgroundResource(R.drawable.scan_store);
-//			qrcode.setBackgroundResource(R.drawable.scan_qr_hl);
-//			qrcode.setSelected(true);
-//			onecode.setSelected(false);
-//			statusView.setText(R.string.scan_qrcode);
-			viewfinderView.setVisibility(View.VISIBLE);
-			currentState = "qrcode";
-			qrcodeSetting();
-
-		}
-	};
 
 	private void qrcodeSetting() {
 		decodeFormats = new Vector<BarcodeFormat>(2);
 		decodeFormats.clear();
 		decodeFormats.add(BarcodeFormat.QR_CODE);
 		decodeFormats.add(BarcodeFormat.DATA_MATRIX);
-		//scanTextView.setText(R.string.scan_qr);
 		if (null != mHandler) {
 			mHandler.setDecodeFormats(decodeFormats);
 		}
 
 		viewfinderView.refreshDrawableState();
-		cameraManager.setManualFramingRect(300, 300);
+		cameraManager.setManualFramingRect(400, 400);
 		viewfinderView.refreshDrawableState();
 	}
 
@@ -583,19 +401,18 @@ public class CaptureActivity extends ActionBarActivity implements SurfaceHolder.
 		}
 		resetStatusView();
 	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-	  switch(item.getItemId())
-	  {
-	    case android.R.id.home:
-	      finish();
-	      return true;
-	  }
-	  return super.onOptionsItemSelected(item);
-	}
 
+  @Override
+  public void onClick(View v)
+  {
+    if(v==img_flashLight)
+    {
+      ToastUtils.AlertMessageInBottom("flash_light");
+    }else if(v==img_photo_lib)
+    {
+      ToastUtils.AlertMessageInBottom("photo_lib");
+    }
+  }
 
 
 }
