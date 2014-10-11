@@ -79,7 +79,7 @@ public final class ViewfinderView extends View {
 	/**
 	 * 中间那条线每次刷新移动的距离
 	 */
-	private static final int SPEEN_DISTANCE = 10;
+	private static final int SPEEN_DISTANCE = 3;
 
 	/**
 	 * 手机的屏幕密度

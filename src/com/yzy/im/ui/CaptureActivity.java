@@ -53,6 +53,7 @@ import com.yzy.im.zxxing.camera.CameraManager;
  */
 public class CaptureActivity extends Activity implements SurfaceHolder.Callback,OnClickListener {
 	private static final String TAG = CaptureActivity.class.getSimpleName();
+	public static final int REQUEST_CODE=0x001;
 
 	private boolean hasSurface;
 	private BeepManager beepManager;// 声音震动管理器。如果扫描成功后可以播放一段音频，也可以震动提醒，可以通过配置来决定扫描成功后的行为。
@@ -474,8 +475,18 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback,
       
     }else if(v==img_photo_lib)
     {
-      //ToastUtils.AlertMessageInBottom("photo_lib");
+      Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); 
+      innerIntent.setType("image/*");  
+      Intent wrapperIntent = Intent.createChooser(innerIntent, "请选择二维码图片");  
+      this.startActivityForResult(wrapperIntent, REQUEST_CODE);
     }
+  }
+  
+  //选择图片
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data)
+  {
+    super.onActivityResult(requestCode, resultCode, data);
   }
 
   

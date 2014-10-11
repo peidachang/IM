@@ -40,6 +40,7 @@ import com.yzy.im.customview.QuickActionWidget;
 import com.yzy.im.model.PushAsyncTask;
 import com.yzy.im.server.IConstants;
 import com.yzy.im.util.CommonUtil;
+import com.yzy.im.util.LogUtil;
 import com.yzy.im.util.SharePreferenceHelper;
 
 public class UserListFragment extends Fragment implements IEventCallback,OnDismissListener,OnClickListener
@@ -58,6 +59,7 @@ public class UserListFragment extends Fragment implements IEventCallback,OnDismi
   public void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
+    LogUtil.getLogger().d("life->UserListFragment-->onCreate()");
     //在Fragment里面加入ActionItem，必须加入这一句
     setHasOptionsMenu(true);
     IMApplication.getInstance().addEventCallback(this);
@@ -227,6 +229,7 @@ public class UserListFragment extends Fragment implements IEventCallback,OnDismi
   public void onDestroy()
   {
     IMApplication.getInstance().removeEventCallback(this);
+    LogUtil.getLogger().d("life->UserListFragment-->onDestroy()");
     super.onDestroy();
   }
   
