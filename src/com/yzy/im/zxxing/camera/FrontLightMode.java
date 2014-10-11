@@ -16,6 +16,9 @@
 
 package com.yzy.im.zxxing.camera;
 
+import com.yzy.im.config.IMConfiguration;
+import com.yzy.im.util.SharePreferenceHelper;
+
 import android.content.SharedPreferences;
 
 /**
@@ -34,9 +37,22 @@ public enum FrontLightMode {
     return modeString == null ? OFF : valueOf(modeString);
   }
 
-  public static FrontLightMode readPref(SharedPreferences sharedPrefs) {
+  public static FrontLightMode readPref() {
     //return parse(sharedPrefs.getString(PreferencesActivity.KEY_FRONT_LIGHT_MODE, OFF.toString()));
-    return parse(AUTO.toString());
+    int result=IMConfiguration.getIntProperty(IMConfiguration.KEY_FLASH_LIGHT, 0);
+    if(result==1)
+    {
+      //自动
+      return AUTO;
+    }else if(result==2)
+    {
+      //一直打开
+      return ON;
+    }else
+    {
+      //关闭
+      return OFF;
+    }
   }
 
 }

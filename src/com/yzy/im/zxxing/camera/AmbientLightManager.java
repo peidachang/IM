@@ -32,7 +32,7 @@ import android.preference.PreferenceManager;
  */
 final class AmbientLightManager implements SensorEventListener {
 
-  private static final float TOO_DARK_LUX = 25.0f;
+  private static final float TOO_DARK_LUX = 50.0f;
   private static final float BRIGHT_ENOUGH_LUX = 450.0f;
 
   private final Context context;
@@ -46,7 +46,7 @@ final class AmbientLightManager implements SensorEventListener {
   void start(CameraManager cameraManager) {
     this.cameraManager = cameraManager;
     SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-    if (FrontLightMode.readPref(sharedPrefs) == FrontLightMode.AUTO) {
+    if (FrontLightMode.readPref() == FrontLightMode.AUTO) {
       SensorManager sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
       lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
       if (lightSensor != null) {

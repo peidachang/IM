@@ -11,6 +11,7 @@ import android.text.TextUtils;
 public class IMConfiguration
 {
   private static final String TAG = "IMConfiguration";
+  public static final String KEY_FLASH_LIGHT="KEY_FLASH_LIGHT";
   private static Properties defaultProperty;
   
   static

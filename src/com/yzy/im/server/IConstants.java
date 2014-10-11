@@ -72,6 +72,8 @@ public interface IConstants
   
   public static final String MSG_KEY="msgkey";
   
+  public static final String MSG_ADD_FRIEND_PRE="addFriend";
+  
   
   /**
    * 推送类型，取值范围为：1～3

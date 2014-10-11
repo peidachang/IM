@@ -10,6 +10,7 @@ import java.util.Vector;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -25,12 +26,20 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.ResultMetadataType;
 import com.google.zxing.ResultPoint;
 import com.yzy.im.R;
+import com.yzy.im.bean.IMMessage;
+import com.yzy.im.bean.User;
+import com.yzy.im.callback.IPushMessageCallback;
 import com.yzy.im.customview.AutoBgImageView;
+import com.yzy.im.model.PushAsyncTask;
+import com.yzy.im.server.IConstants;
+import com.yzy.im.util.DialogUtils;
+import com.yzy.im.util.LogUtil;
 import com.yzy.im.util.ToastUtils;
 import com.yzy.im.zxing.decode.CaptureActivityHandler;
 import com.yzy.im.zxing.decode.FinishListener;
@@ -47,7 +56,6 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback,
 
 	private boolean hasSurface;
 	private BeepManager beepManager;// 声音震动管理器。如果扫描成功后可以播放一段音频，也可以震动提醒，可以通过配置来决定扫描成功后的行为。
-	//public SharedPreferences mSharedPreferences;// 存储二维码条形码选择的状态
 	public static String currentState;// 条形码二维码选择状态
 	private String characterSet;
 
@@ -56,8 +64,8 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback,
 	private SurfaceHolder surfaceHolder;
 	
 	private AutoBgImageView img_flashLight;
-	
 	private AutoBgImageView img_photo_lib;
+	private ProgressDialog dialog;
 
 	/**
 	 * 活动监控器，用于省电，如果手机没有连接电源线，那么当相机开启后如果一直处于不被使用状态则该服务会将当前activity关闭。
@@ -278,13 +286,59 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback,
 				formatter.format(new Date(rawResult.getTimestamp())));
 		bundle.putCharSequence("metadataText", metadataText);
 		bundle.putString("resultString", rawResult.getText());
-		intent.setClass(CaptureActivity.this, ResultActivity.class);
-		intent.putExtras(bundle);
-		startActivity(intent);
-		CaptureActivity.this.finish();
+		if(rawResult.getText().startsWith(IConstants.MSG_ADD_FRIEND_PRE))
+		{
+		  //在使用Gson解析之前，去掉前缀
+		  String userinfo=rawResult.getText().substring(9);
+		  LogUtil.getLogger().d("userinfo-->"+userinfo);
+		  addFriend(userinfo);
+		}else
+		{
+      intent.setClass(CaptureActivity.this, ResultActivity.class);
+      intent.putExtras(bundle);
+      startActivity(intent);
+      CaptureActivity.this.finish();
+		}
+		
 		// handleDecodeInternally(rawResult, barcode);
 
 	}
+
+  private void addFriend(String userinfo)
+  {
+    if(dialog==null)
+    {
+      dialog=DialogUtils.createProcgressDialog(this, "正在添加好友...");
+    }
+    IMMessage msg=new IMMessage(IConstants.MSG_NEW_USER, "tag");
+    PushAsyncTask task=new PushAsyncTask();
+    User user=new Gson().fromJson(userinfo, User.class);
+    task.execute(new Gson().toJson(msg),user.getUserId(),new IPushMessageCallback()
+    {
+      
+      @Override
+      public void onSuccess()
+      {
+        if(dialog!=null)
+        {
+          dialog.dismiss();
+          CaptureActivity.this.finish();
+          ToastUtils.AlertMessageInBottom("Add Friend Success");
+        }
+      }
+      
+      @Override
+      public void onFailure()
+      {
+        if(dialog!=null)
+        {
+          dialog.dismiss();
+          CaptureActivity.this.finish();
+        }
+        ToastUtils.AlertMessageInBottom("Add Friend Failure");
+      }
+    });
+  }
 
 	/**
 	 * 在扫描图片结果中绘制绿色的点
@@ -407,12 +461,23 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback,
   {
     if(v==img_flashLight)
     {
-      ToastUtils.AlertMessageInBottom("flash_light");
+      //ToastUtils.AlertMessageInBottom("flash_light");
+      //首先判断灯光是否已经开启
+      boolean islight=cameraManager.getTorchState();
+      if(islight)
+      {
+        cameraManager.setTorch(false);
+      }else
+      {
+        cameraManager.setTorch(true);
+      }
+      
     }else if(v==img_photo_lib)
     {
-      ToastUtils.AlertMessageInBottom("photo_lib");
+      //ToastUtils.AlertMessageInBottom("photo_lib");
     }
   }
 
+  
 
 }

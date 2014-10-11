@@ -147,7 +147,6 @@ public final class CameraManager {
 				}
 			}
 		}
-
 		ambientManager.start(this);
 	}
 
@@ -426,6 +425,16 @@ public final class CameraManager {
 		// Go ahead and assume it's YUV rather than die.
 		return new PlanarYUVLuminanceSource(data, width, height, rect.left,
 				rect.top, rect.width(), rect.height(), false);
+	}
+	
+	
+	public boolean getTorchState()
+	{
+	  if(configManager!=null && camera!=null)
+	  {
+	    return configManager.getTorchState(camera);
+	  }
+	  return false;
 	}
 
 }

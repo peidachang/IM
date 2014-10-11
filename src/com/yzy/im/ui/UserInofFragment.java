@@ -12,13 +12,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.yzy.im.IMApplication;
 import com.yzy.im.R;
+import com.yzy.im.bean.User;
+import com.yzy.im.server.IConstants;
 
 public class UserInofFragment extends Fragment
 {
@@ -26,6 +30,7 @@ public class UserInofFragment extends Fragment
   private static  final int IMAGE_HALFWIDTH = 30;
   //用户二维码名片
   private ImageView img_qrcode;
+  private User user;
   
   
   @Override
@@ -45,9 +50,13 @@ public class UserInofFragment extends Fragment
   {
     super.onViewCreated(view, savedInstanceState);
     img_qrcode=(ImageView)view.findViewById(R.id.img_qr_code);
+    String uid=IMApplication.getInstance().getSharePreference().getUserId();
+    String cid=IMApplication.getInstance().getSharePreference().getChannelId();
+    String nick=IMApplication.getInstance().getSharePreference().getNick();
+    user=new User(uid,cid,nick);
     try
     {
-      img_qrcode.setImageBitmap(cretaeBitmap("Hello"));
+      img_qrcode.setImageBitmap(cretaeBitmap(IConstants.MSG_ADD_FRIEND_PRE+new Gson().toJson(user)));
     } catch (WriterException e)
     {
       e.printStackTrace();

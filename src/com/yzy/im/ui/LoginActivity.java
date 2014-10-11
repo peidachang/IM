@@ -100,33 +100,41 @@ public class LoginActivity extends BaseActivity implements OnClickListener,IEven
         IMApplication.getInstance().getSharePreference().setUserId(user_id);
         IMApplication.getInstance().getSharePreference().setAppId(user_id);
         
-        //通知其他用户，你已经登录成功
-        IMMessage msg=new IMMessage(IConstants.MSG_NEW_USER, "tag");
-        PushAsyncTask task=new PushAsyncTask();
-        task.execute(new Gson().toJson(msg),"",new IPushMessageCallback()
+        
+        if(dialog!=null)
         {
-          
-          @Override
-          public void onSuccess()
-          {
-            if(dialog!=null)
-            {
-              dialog.dismiss();
-            }
-            Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-            LoginActivity.this.startActivity(intent);
-          }
-          
-          @Override
-          public void onFailure()
-          {
-            if(dialog!=null)
-            {
-              dialog.dismiss();
-            }
-            ToastUtils.AlertMessageInBottom("Login Failure");
-          }
-        });
+          dialog.dismiss();
+        }
+        
+        Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+        LoginActivity.this.startActivity(intent);
+        //通知其他用户，你已经登录成功
+//        IMMessage msg=new IMMessage(IConstants.MSG_NEW_USER, "tag");
+//        PushAsyncTask task=new PushAsyncTask();
+//        task.execute(new Gson().toJson(msg),"",new IPushMessageCallback()
+//        {
+//          
+//          @Override
+//          public void onSuccess()
+//          {
+//            if(dialog!=null)
+//            {
+//              dialog.dismiss();
+//            }
+//            Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+//            LoginActivity.this.startActivity(intent);
+//          }
+//          
+//          @Override
+//          public void onFailure()
+//          {
+//            if(dialog!=null)
+//            {
+//              dialog.dismiss();
+//            }
+//            ToastUtils.AlertMessageInBottom("Login Failure");
+//          }
+//        });
       } catch (JSONException e)
       {
         LogUtil.getLogger().i("error-->"+e.getMessage());
