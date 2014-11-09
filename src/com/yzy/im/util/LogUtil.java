@@ -1,5 +1,7 @@
 package com.yzy.im.util;
 
+import com.yzy.im.BuildConfig;
+
 import android.util.Log;
 
 public class LogUtil {
@@ -10,7 +12,7 @@ public class LogUtil {
 	/**
 	 * debug or not
 	 */
-	private static boolean debug = true;
+	private static boolean debug = BuildConfig.DEBUG;
  
 	private static LogUtil instance = new LogUtil();
  

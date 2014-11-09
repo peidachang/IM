@@ -259,8 +259,8 @@ public final class ViewfinderView extends View {
 				}
 			}
 			// 刷新界面区域
-			//postInvalidateDelayed(ANIMATION_DELAY, 0, 0, width, height);
-			postInvalidateDelayed(ANIMATION_DELAY, frame.left, frame.top, frame.right, frame.bottom);
+			postInvalidateDelayed(ANIMATION_DELAY, 0, 0, width, height);
+			//postInvalidateDelayed(ANIMATION_DELAY, frame.left, frame.top, frame.right, frame.bottom);
 		}
 	}
 
